@@ -9,6 +9,7 @@ export default function KidView({ kid, isParent, onBack, onLogout }) {
   const [history, setHistory] = useState([])
   const [tab, setTab] = useState('tasks')
   const [loading, setLoading] = useState(true)
+  const [taskStats, setTaskStats] = useState(null)
 
   const loadHistory = useCallback(async () => {
     const { data } = await supabase
@@ -52,6 +53,12 @@ export default function KidView({ kid, isParent, onBack, onLogout }) {
         <div className="week-progress-bar">
           <div className="week-progress-fill" style={{ width: weekPct + '%', background: kid.color }} />
         </div>
+        {taskStats && taskStats.total > 0 && (
+          <div className="daily-completion-hint">
+            今日每日任務：{taskStats.completed}／{taskStats.total} 項完成
+            （{Math.round(taskStats.completed / taskStats.total * 100)}%）
+          </div>
+        )}
       </div>
 
       <div className="tabs">
@@ -66,7 +73,7 @@ export default function KidView({ kid, isParent, onBack, onLogout }) {
 
       {loading ? <div className="loading">載入中...</div> : (
         <>
-          {tab === 'tasks' && <TaskBoard kid={kid} history={history} onRefresh={loadHistory} isParent={isParent} />}
+          {tab === 'tasks' && <TaskBoard kid={kid} history={history} onRefresh={loadHistory} isParent={isParent} onStatsUpdate={setTaskStats} />}
           {tab === 'rewards' && <RewardShop kid={kid} score={score} history={history} onRefresh={loadHistory} isParent={isParent} />}
           {tab === 'pet' && <Pet kid={kid} totalEarned={totalEarned} history={history} />}
         </>

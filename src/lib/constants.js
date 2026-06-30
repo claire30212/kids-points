@@ -3,6 +3,12 @@ export const PETS = {
   cat:{e:'🐱',n:'貓咪'}, dog:{e:'🐶',n:'狗狗'}, rabbit:{e:'🐰',n:'兔兔'},
   dino:{e:'🦕',n:'恐龍'}, duck:{e:'🐥',n:'小鴨'}, monster:{e:'👾',n:'怪獸'}
 }
+// Slot definitions: each slot is mutually exclusive (only one item per slot)
+export const ACCESSORY_SLOTS = {
+  head: { label: '頭部', items: ['🎩', '👑'] },
+  face: { label: '臉部', items: ['🕶️'] },
+  neck: { label: '頸部', items: ['🎀'] },
+}
 export const PET_LEVELS = [
   {min:0, label:'初生', acc:[],                    habitat:'🌱',habitatLabel:'空地',habitatBg:'#EFF8EE',items:[]},
   {min:5, label:'幼年', acc:['🎀'],                habitat:'🏡',habitatLabel:'小窩',habitatBg:'#FFF5E8',items:['🌸']},

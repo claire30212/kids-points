@@ -111,6 +111,21 @@ button { cursor: pointer; border: none; font-family: inherit; }
 .section-title { font-size: 16px; font-weight: 700; color: #5A5059; padding: 16px 18px 8px; }
 .task-group-title { font-size: 13px; font-weight: 700; color: #A09098; margin: 14px 0 6px; text-transform: uppercase; letter-spacing: .5px; }
 
+/* ─── Task Group Header ─── */
+.task-group-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin: 14px 0 6px;
+}
+.task-group-header .task-group-title { margin: 0; }
+.sort-btns { display: flex; gap: 4px; }
+.sort-btn {
+  background: #F0EBE7; color: #A09098; border-radius: 10px;
+  padding: 3px 8px; font-size: 11px; font-family: inherit; border: 1.5px solid transparent;
+  cursor: pointer; transition: all .15s;
+}
+.sort-btn:hover { color: #5A5059; background: #E8E0DC; }
+.sort-btn.active { background: #F5F0FC; color: #7A6088; border-color: #C4B5D4; }
+
 /* ─── Task Card ─── */
 .task-card {
   background: #FDFCFB; border: 1.5px solid #F0EBE7; border-radius: 14px;
@@ -118,12 +133,140 @@ button { cursor: pointer; border: none; font-family: inherit; }
   display: flex; align-items: center; justify-content: space-between; gap: 8px;
 }
 .task-card.task-done { opacity: .6; background: #F9F7F5; }
+.task-card.task-penalty { border-left: 4px solid #E8A0A0; }
 .task-info { flex: 1; min-width: 0; }
 .task-name { font-size: 14px; color: #5A5059; font-weight: 500; }
 .task-pts { font-size: 13px; color: #A09098; margin-top: 2px; }
+.task-pts.penalty { color: #C0504D; font-weight: 600; }
 .task-done-label { font-size: 12px; color: #A8C4B8; margin-left: 6px; }
 .task-time { font-size: 11px; color: #BBA8B5; margin-left: 6px; }
 .task-actions { display: flex; align-items: center; flex-shrink: 0; }
+
+/* ─── Drag Handle ─── */
+.drag-handle {
+  color: #D4C8D0; font-size: 16px; cursor: grab; flex-shrink: 0;
+  padding-right: 6px; user-select: none;
+}
+.drag-handle:active { cursor: grabbing; }
+
+/* ─── Inline Edit ─── */
+.task-edit-row { display: flex; gap: 6px; flex: 1; min-width: 0; }
+.input-inline {
+  padding: 6px 10px; font-size: 13px; border-radius: 8px; margin-top: 0;
+  border: 1.5px solid #E8E0DC; background: #fff; flex: 1; min-width: 0;
+}
+.input-pts { flex: 0 0 64px; }
+
+/* ─── Long Press Delete ─── */
+.btn-long-press { position: relative; overflow: hidden; }
+.long-press-bar {
+  position: absolute; left: 0; top: 0; height: 100%; width: 0;
+  background: rgba(139,72,72,0.35); pointer-events: none;
+}
+.btn-long-press.pressing .long-press-bar {
+  animation: fillBar 500ms linear forwards;
+}
+@keyframes fillBar { from { width: 0% } to { width: 100% } }
+
+/* ─── ⋯ More Menu ─── */
+.more-menu-wrap { position: relative; display: inline-flex; }
+.btn-more {
+  background: #F0EBE7; color: #A09098; border-radius: 14px;
+  padding: 5px 10px; font-size: 15px; margin-left: 4px; line-height: 1;
+}
+.btn-more:hover { background: #E8E0DC; }
+.more-menu {
+  position: absolute; right: 0; top: calc(100% + 4px);
+  background: #fff; border: 1.5px solid #E8E0DC; border-radius: 12px;
+  padding: 6px; z-index: 50; min-width: 110px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  display: flex; flex-direction: column; gap: 4px;
+}
+.more-menu-item {
+  background: none; color: #5A5059; border-radius: 8px;
+  padding: 7px 12px; font-size: 13px; text-align: left;
+  font-family: inherit; width: 100%;
+}
+.more-menu-item:hover { background: #F0EBE7; }
+.more-menu .btn-sm { width: 100%; margin-left: 0; text-align: left; border-radius: 8px; }
+
+/* ─── Edit / Penalty / Cancel Buttons ─── */
+.btn-edit {
+  background: #F0EBE7; color: #A09098; border-radius: 14px;
+  padding: 5px 9px; font-size: 13px; margin-left: 4px;
+}
+.btn-edit:hover { background: #E8E0DC; }
+.btn-penalty { background: #EFCFC8; color: #8B4848; border-radius: 14px; }
+.btn-penalty:hover:not(:disabled) { background: #E8B8B0; }
+.btn-penalty:disabled { opacity: .5; }
+.btn-cancel {
+  background: #EEEAED; color: #9A8C98; border-radius: 14px;
+  padding: 5px 12px; font-size: 13px; font-weight: 500; margin-left: 6px;
+}
+.btn-cancel:hover:not(:disabled) { background: #E0DBE0; }
+.btn-cancel:disabled { opacity: .5; }
+
+/* ─── Task clickable ─── */
+.task-clickable { cursor: pointer; }
+.task-clickable:hover { background: #F5F2F0; }
+.task-clickable.task-done:hover { background: #F2EFED; }
+
+/* ─── Task group actions ─── */
+.task-group-actions { display: flex; gap: 4px; align-items: center; }
+
+/* ─── Backfill Panel ─── */
+.backfill-panel {
+  background: #F7F4F2; border-radius: 12px; padding: 12px;
+  margin-bottom: 10px;
+}
+.backfill-days { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+.backfill-day-btn {
+  background: #fff; border: 1.5px solid #E8E0DC; border-radius: 10px;
+  padding: 5px 10px; font-size: 12px; color: #7A6088; font-family: inherit;
+  cursor: pointer; transition: all .15s;
+}
+.backfill-day-btn:hover { border-color: #C4B5D4; }
+.backfill-day-btn.active { background: #F5F0FC; border-color: #C4B5D4; color: #5A4068; font-weight: 600; }
+.backfill-tasks { display: flex; flex-direction: column; gap: 6px; }
+.backfill-task-row {
+  display: flex; align-items: center; justify-content: space-between;
+  background: #fff; border-radius: 10px; padding: 8px 12px;
+  border: 1.5px solid #F0EBE7;
+}
+.backfill-task-info { display: flex; gap: 8px; align-items: center; flex: 1; min-width: 0; }
+.backfill-task-name { font-size: 13px; color: #5A5059; font-weight: 500; }
+.backfill-task-pts { font-size: 12px; color: #A09098; }
+.btn-backfill-done {
+  background: #EAF5EE; color: #4A9060; border-radius: 14px;
+  padding: 5px 10px; font-size: 12px; font-weight: 500; margin-left: 6px;
+}
+.btn-backfill-done:hover:not(:disabled) { background: #D8EEE0; }
+.btn-backfill-done:disabled { opacity: .5; }
+
+/* ─── Score Summary Card ─── */
+.score-summary-card {
+  background: #fff; border: 1.5px solid #F0EBE7; border-radius: 16px;
+  padding: 14px 16px; margin-bottom: 14px;
+  box-shadow: 0 2px 8px rgba(90,80,89,0.06);
+}
+.score-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 5px 0; font-size: 13px; color: #5A5059;
+}
+.score-label { color: #7A7080; }
+.score-val { font-weight: 600; }
+.score-earn { color: #4A9060; }
+.score-spend { color: #C0504D; }
+.score-divider { height: 1px; background: #F0EBE7; margin: 8px 0; }
+.score-balance-row { padding: 6px 0 0; }
+.score-balance { color: #C4B5D4; font-size: 17px; font-weight: 700; }
+
+/* ─── Reward Edit ─── */
+.reward-edit { flex-wrap: wrap; gap: 8px; }
+.reward-emoji-picker { display: flex; gap: 6px; flex-wrap: wrap; width: 100%; }
+
+/* ─── Penalty type-btn ─── */
+.penalty-btn.selected { border-color: #E8A0A0; background: #FFF0F0; }
 
 /* ─── Reward Card ─── */
 .reward-card {
@@ -204,13 +347,7 @@ button { cursor: pointer; border: none; font-family: inherit; }
 .pet-habitat-label {
   position: absolute; top: 12px; left: 16px; font-size: 12px; color: #A09098;
 }
-.pet-habitat-items {
-  position: absolute; bottom: 12px; display: flex; gap: 8px; font-size: 20px;
-}
-.habitat-item { animation: float 3s ease-in-out infinite; }
-.habitat-item:nth-child(2) { animation-delay: .5s; }
-.habitat-item:nth-child(3) { animation-delay: 1s; }
-.habitat-item:nth-child(4) { animation-delay: 1.5s; }
+.habitat-item { position: absolute; animation: float 3s ease-in-out infinite; }
 @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
 .pet-body { display: flex; flex-direction: column; align-items: center; position: relative; }
 .pet-emoji { font-size: 72px; line-height: 1; transition: transform .2s; }
@@ -244,6 +381,103 @@ button { cursor: pointer; border: none; font-family: inherit; }
 }
 .level-row.locked { opacity: .5; }
 .level-row:last-child { border-bottom: none; }
+
+/* ─── PIN wrap ─── */
+.pin-wrap { position: relative; display: flex; align-items: center; }
+.pin-wrap .input { padding-right: 40px; }
+.pin-toggle {
+  position: absolute; right: 10px; background: none; font-size: 16px;
+  color: #A09098; padding: 4px; line-height: 1;
+}
+
+/* ─── Kid card redeem hint ─── */
+.kid-card-redeem {
+  font-size: 11px; color: #BBA8B5; margin: 0 0 8px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* ─── Empty page hint ─── */
+.empty-page-hint {
+  text-align: center; color: #BBA8B5; font-size: 14px;
+  padding: 32px 24px; line-height: 1.6;
+}
+
+/* ─── Penalty Log ─── */
+.penalty-log {
+  background: #FFF5F5; border-left: 4px solid #E8A0A0;
+  border-radius: 12px; padding: 12px 14px; margin: 10px 0 14px;
+}
+.penalty-log-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 10px;
+}
+.penalty-log-title { font-size: 13px; font-weight: 700; color: #8B4848; }
+.penalty-log-total { font-size: 12px; color: #C0504D; font-weight: 600; }
+.penalty-log-total.zero { color: #BBA8B5; font-weight: 400; }
+.penalty-row {
+  display: flex; align-items: center; gap: 6px; margin-bottom: 6px;
+}
+.penalty-row.saved {
+  background: #fff; border-radius: 8px; padding: 6px 10px;
+  border: 1px solid #F5E0E0;
+}
+.penalty-row-note { flex: 1; font-size: 13px; color: #5A5059; }
+.penalty-row-pts { font-size: 13px; color: #C0504D; font-weight: 600; min-width: 28px; text-align: right; }
+.penalty-row-del { background: none; font-size: 15px; padding: 2px 4px; color: #C09090; }
+.penalty-row-del:hover { color: #8B4848; }
+.penalty-input {
+  border: 1.5px solid #F0D0D0; border-radius: 8px; padding: 6px 8px;
+  font-size: 13px; font-family: inherit; background: #fff; color: #5A5059;
+  outline: none;
+}
+.penalty-input:focus { border-color: #E8A0A0; }
+.penalty-input-note { flex: 1; }
+.penalty-input-pts { width: 56px; text-align: center; }
+.penalty-add-btn {
+  background: none; color: #C09090; font-size: 12px; padding: 4px 0;
+  font-family: inherit; margin-top: 4px;
+}
+.penalty-add-btn:hover { color: #8B4848; }
+
+/* ─── Daily Completion Hint ─── */
+.daily-completion-hint {
+  font-size: 12px; color: #A09098; margin-top: 6px; text-align: right;
+}
+
+/* ─── Pet Overlay ─── */
+.pet-overlay-wrap {
+  position: relative;
+  width: 80px; height: 80px;
+  margin: 44px auto 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.pet-overlay-wrap .pet-emoji {
+  font-size: 72px; line-height: 1;
+  position: relative; z-index: 1;
+  transition: transform .2s;
+}
+/* ─── Wardrobe ─── */
+.pet-wardrobe { margin-bottom: 20px; }
+.wardrobe-row {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+}
+.wardrobe-slot-label {
+  font-size: 12px; color: #A09098; min-width: 28px; flex-shrink: 0; text-align: right;
+}
+.wardrobe-items { display: flex; gap: 8px; flex-wrap: wrap; }
+.wardrobe-item {
+  background: #F0EBE7; border-radius: 12px; padding: 7px 14px;
+  font-size: 14px; color: #5A5059; border: 2px solid transparent;
+  font-family: inherit; cursor: pointer; position: relative;
+  transition: all .15s; display: flex; align-items: center; justify-content: center;
+  min-width: 52px;
+}
+.wardrobe-item:hover:not(.wardrobe-item-locked) { background: #E8E0DC; }
+.wardrobe-item-selected { border-color: #C4B5D4; background: #F5F0FC !important; }
+.wardrobe-item-locked { opacity: 0.45; cursor: default; }
+.wardrobe-emoji { font-size: 20px; line-height: 1; }
+.wardrobe-lock { font-size: 9px; position: absolute; bottom: 2px; right: 4px; line-height: 1; }
 
 /* ─── Toast ─── */
 .toast-container {
