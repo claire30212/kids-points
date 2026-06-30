@@ -93,9 +93,26 @@ export default function Pet({ kid, totalEarned }) {
       .single()
       .then(({ data, error }) => {
         if (!error && data) {
-          if (data.equipped_accessories) {
-            setEquipped(data.equipped_accessories)
-            localStorage.setItem(lsKey, JSON.stringify(data.equipped_accessories))
+          const dbEquipped = data.equipped_accessories
+          if (dbEquipped && Object.keys(dbEquipped).length > 0) {
+            // DB has real data — use as authoritative source
+            setEquipped(dbEquipped)
+            localStorage.setItem(lsKey, JSON.stringify(dbEquipped))
+          } else {
+            // DB is empty (column just added with DEFAULT {}) — one-time migration from localStorage
+            const lsRaw = localStorage.getItem(lsKey)
+            if (lsRaw) {
+              try {
+                const lsEquipped = JSON.parse(lsRaw)
+                if (lsEquipped && Object.keys(lsEquipped).length > 0) {
+                  setEquipped(lsEquipped)
+                  supabase.from('kp_kids')
+                    .update({ equipped_accessories: lsEquipped })
+                    .eq('id', kid.id)
+                    .then(() => {})
+                }
+              } catch {}
+            }
           }
           const base = typeof data.pet_mood === 'number' ? data.pet_mood : mood
           const ts   = data.pet_mood_updated_at
@@ -103,7 +120,7 @@ export default function Pet({ kid, totalEarned }) {
             : new Date(localStorage.getItem(moodTsLsKey) || Date.now())
           applyDecay(base, ts)
         } else {
-          // columns not yet created — fall back to localStorage
+          // Network error — keep initial state from kid prop; localStorage as last resort
           const stored = localStorage.getItem(lsKey)
           if (stored) try { setEquipped(JSON.parse(stored)) } catch {}
           const ts = new Date(localStorage.getItem(moodTsLsKey) || Date.now())
