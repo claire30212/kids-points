@@ -653,6 +653,78 @@ button { cursor: pointer; border: none; font-family: inherit; }
 .sc-pillar-lg { width: 12px; height: 52px; }
 
 /* ════════════════════════════════════════
+   ─── Feed Animation ───
+   ════════════════════════════════════════ */
+.feed-apple {
+  position: absolute;
+  font-size: 34px;
+  top: 8%;
+  left: 50%;
+  z-index: 6;
+  pointer-events: none;
+  animation: appleFall 1.2s ease-in-out forwards;
+}
+@keyframes appleFall {
+  0%   { opacity: 0; transform: translateX(-50%) translateY(-18px) scale(1.2); }
+  12%  { opacity: 1; transform: translateX(-50%) translateY(-18px) scale(1.1); }
+  46%  { opacity: 1; transform: translateX(-50%) translateY(66px)  scale(1);   }
+  64%  { opacity: 1; transform: translateX(-50%) translateY(66px)  scale(1);   }
+  80%  { opacity: 0.5; transform: translateX(-50%) translateY(66px) scale(0.45); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(66px)  scale(0);   }
+}
+/* Chewing jiggle applied to pet-body */
+.pet-chew {
+  animation: petChew 0.72s ease-in-out 0.44s;
+}
+@keyframes petChew {
+  0%   { transform: scale(1); }
+  18%  { transform: scale(1.05); }
+  36%  { transform: scale(1); }
+  54%  { transform: scale(1.04); }
+  72%  { transform: scale(1); }
+  86%  { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+/* ════════════════════════════════════════
+   ─── Play Animation ───
+   ════════════════════════════════════════ */
+.play-ball {
+  position: absolute;
+  font-size: 28px;
+  bottom: 20%;
+  left: 50%;
+  z-index: 4;
+  pointer-events: none;
+  animation: ballBounce 1.5s ease-in-out forwards;
+}
+@keyframes ballBounce {
+  0%   { opacity: 0; transform: translateX(-50%) translateY(0); }
+  7%   { opacity: 1; transform: translateX(-50%) translateY(0); }
+  22%  { transform: translateX(calc(-50% - 30px)) translateY(-14px); }
+  37%  { transform: translateX(-50%) translateY(0); }
+  52%  { transform: translateX(calc(-50% + 30px)) translateY(-14px); }
+  67%  { transform: translateX(-50%) translateY(0); }
+  80%  { transform: translateX(calc(-50% - 20px)) translateY(-8px); }
+  91%  { transform: translateX(-50%) translateY(0); opacity: 1; }
+  100% { transform: translateX(-50%) translateY(0); opacity: 0; }
+}
+/* Left-right sway applied to pet-body */
+.pet-sway {
+  animation: petSway 1.5s ease-in-out forwards;
+}
+@keyframes petSway {
+  0%   { transform: rotate(0deg); }
+  16%  { transform: rotate(-5deg); }
+  33%  { transform: rotate(0deg); }
+  50%  { transform: rotate(5deg); }
+  66%  { transform: rotate(0deg); }
+  80%  { transform: rotate(-3deg); }
+  92%  { transform: rotate(0deg); }
+  100% { transform: rotate(0deg); }
+}
+
+/* ════════════════════════════════════════
    ─── Mood Bar ───
    ════════════════════════════════════════ */
 .pet-mood-wrap { margin: -4px 0 14px; }

@@ -57,8 +57,9 @@ function getMoodInfo(m) {
 export default function Pet({ kid, totalEarned }) {
   const toast = useToast()
   const [msgText, setMsgText] = useState(null)
-  const [anim, setAnim] = useState(false)
-  const [sleepAnim, setSleepAnim] = useState(false)
+  const [sleepAnim, setSleepAnim]  = useState(false)
+  const [feedAnim, setFeedAnim] = useState(false)
+  const [playAnim, setPlayAnim] = useState(false)
   const [celebration, setCelebration] = useState(null)
 
   const lsKey        = `equipped_${kid.id}`
@@ -148,11 +149,12 @@ export default function Pet({ kid, totalEarned }) {
   }
 
   function interact(type) {
-    if (sleepAnim) return
+    if (sleepAnim || feedAnim || playAnim) return
+
+    showMsg(type)
 
     if (type === 'sleep') {
       setSleepAnim(true)
-      showMsg('sleep')
       setTimeout(() => {
         setSleepAnim(false)
         const next = Math.min(100, mood + 10)
@@ -162,14 +164,20 @@ export default function Pet({ kid, totalEarned }) {
       return
     }
 
-    showMsg(type)
-    setAnim(true)
-    setTimeout(() => setAnim(false), 600)
-
-    const delta = 15 // feed & play both +15
-    const next = Math.min(100, mood + delta)
+    const next = Math.min(100, mood + 15)
     setMood(next)
     persistMood(next)
+
+    if (type === 'feed') {
+      setFeedAnim(true)
+      setTimeout(() => setFeedAnim(false), 1200)
+      return
+    }
+
+    if (type === 'play') {
+      setPlayAnim(true)
+      setTimeout(() => setPlayAnim(false), 1500)
+    }
   }
 
   function saveEquipped(next) {
@@ -265,13 +273,19 @@ export default function Pet({ kid, totalEarned }) {
         {sleepAnim && <div className="sleep-overlay" aria-hidden="true" />}
         {sleepAnim && <span className="sleep-zzz" aria-hidden="true">💤</span>}
 
+        {/* Feed animation: apple drops and gets eaten */}
+        {feedAnim && <span className="feed-apple" aria-hidden="true">🍎</span>}
+
+        {/* Play animation: ball bounces side to side */}
+        {playAnim && <span className="play-ball" aria-hidden="true">⚽</span>}
+
         <div className="pet-habitat-label">{level.habitat} {level.habitatLabel}</div>
 
         {level.items.map((item, i) => (
           <span key={i} className="habitat-item" style={CORNER_STYLES[i]}>{item}</span>
         ))}
 
-        <div className={`pet-body ${anim ? 'pet-bounce' : ''}`}>
+        <div className={`pet-body ${feedAnim ? 'pet-chew' : ''} ${playAnim ? 'pet-sway' : ''}`}>
           <div className="pet-overlay-wrap">
             {Object.entries(equipped).map(([slot, emoji]) =>
               emoji ? <span key={slot} style={EQUIP_POS[emoji]}>{emoji}</span> : null
@@ -317,9 +331,9 @@ export default function Pet({ kid, totalEarned }) {
 
       {/* ── Actions ── */}
       <div className="pet-actions">
-        <button className="pet-action-btn" onClick={() => interact('feed')} disabled={sleepAnim}>🍎 餵食</button>
-        <button className="pet-action-btn" onClick={() => interact('play')} disabled={sleepAnim}>⚽ 玩耍</button>
-        <button className="pet-action-btn" onClick={() => interact('sleep')} disabled={sleepAnim}>😴 休息</button>
+        <button className="pet-action-btn" onClick={() => interact('feed')} disabled={sleepAnim || feedAnim || playAnim}>🍎 餵食</button>
+        <button className="pet-action-btn" onClick={() => interact('play')} disabled={sleepAnim || feedAnim || playAnim}>⚽ 玩耍</button>
+        <button className="pet-action-btn" onClick={() => interact('sleep')} disabled={sleepAnim || feedAnim || playAnim}>😴 休息</button>
       </div>
 
       {/* ── Wardrobe ── */}
