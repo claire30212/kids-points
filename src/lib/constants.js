@@ -3,11 +3,20 @@ export const PETS = {
   cat:{e:'🐱',n:'貓咪'}, dog:{e:'🐶',n:'狗狗'}, rabbit:{e:'🐰',n:'兔兔'},
   dino:{e:'🦕',n:'恐龍'}, duck:{e:'🐥',n:'小鴨'}, monster:{e:'👾',n:'怪獸'}
 }
-// Slot definitions: each slot is mutually exclusive (only one item per slot)
-export const ACCESSORY_SLOTS = {
-  head: { label: '頭部', items: ['🎩', '👑'] },
-  face: { label: '臉部', items: ['🕶️'] },
-  neck: { label: '頸部', items: ['🎀'] },
+// 12 accessories across 3 rarities; slot = head|face|neck; unlockAt = cumulative earned score
+export const ACCESSORIES = {
+  hat1:     { emoji: '🎩', slot: 'head', rarity: 'common',    unlockAt: 5,  label: '紳士帽' },
+  glasses1: { emoji: '🕶️', slot: 'face', rarity: 'common',    unlockAt: 5,  label: '墨鏡' },
+  bow1:     { emoji: '🎀', slot: 'neck', rarity: 'common',    unlockAt: 5,  label: '蝴蝶結' },
+  crown1:   { emoji: '👑', slot: 'head', rarity: 'rare',      unlockAt: 20, label: '皇冠' },
+  glasses2: { emoji: '🥽', slot: 'face', rarity: 'rare',      unlockAt: 20, label: '護目鏡' },
+  scarf1:   { emoji: '🧣', slot: 'neck', rarity: 'rare',      unlockAt: 20, label: '圍巾' },
+  hat2:     { emoji: '🎓', slot: 'head', rarity: 'rare',      unlockAt: 20, label: '學士帽' },
+  halo1:    { emoji: '😇', slot: 'head', rarity: 'legendary', unlockAt: 40, label: '光環' },
+  glasses3: { emoji: '👓', slot: 'face', rarity: 'legendary', unlockAt: 40, label: '智慧眼鏡' },
+  necklace1:{ emoji: '💎', slot: 'neck', rarity: 'legendary', unlockAt: 40, label: '鑽石項鍊' },
+  hat3:     { emoji: '🎪', slot: 'head', rarity: 'legendary', unlockAt: 40, label: '馬戲團帽' },
+  bow2:     { emoji: '🌟', slot: 'neck', rarity: 'legendary', unlockAt: 40, label: '星星墜飾' },
 }
 export const PET_LEVELS = [
   {min:0, label:'初生', acc:[],                    habitat:'🌱',habitatLabel:'空地',habitatBg:'#EFF8EE',items:[]},

@@ -651,3 +651,116 @@ button { cursor: pointer; border: none; font-family: inherit; }
   border-radius: 2px 2px 0 0;
 }
 .sc-pillar-lg { width: 12px; height: 52px; }
+
+/* ════════════════════════════════════════
+   ─── Mood Bar ───
+   ════════════════════════════════════════ */
+.pet-mood-wrap { margin: -4px 0 14px; }
+.pet-mood-header {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 13px; color: #5A5059; margin-bottom: 5px;
+}
+.pet-mood-icon { font-size: 16px; }
+.pet-mood-text { flex: 1; }
+.pet-mood-val  { font-size: 12px; color: #A09098; }
+
+/* ════════════════════════════════════════
+   ─── Sleep Animation ───
+   ════════════════════════════════════════ */
+.sleep-overlay {
+  position: absolute; inset: 0; border-radius: 20px;
+  background: rgba(0,0,0,0.30); z-index: 5; pointer-events: none;
+  animation: sleepOverlayFade 3s ease-in-out forwards;
+}
+@keyframes sleepOverlayFade {
+  0%   { opacity: 0 }
+  15%  { opacity: 1 }
+  80%  { opacity: 1 }
+  100% { opacity: 0 }
+}
+.sleep-zzz {
+  position: absolute; font-size: 38px; z-index: 6;
+  top: 28%; left: 50%; transform: translateX(-50%);
+  pointer-events: none;
+  animation: sleepFloat 3s ease-in-out forwards;
+}
+@keyframes sleepFloat {
+  0%   { opacity: 0; transform: translateX(-50%) translateY(0px);    }
+  12%  { opacity: 1; transform: translateX(-50%) translateY(-6px);   }
+  55%  { opacity: 1; transform: translateX(-50%) translateY(-22px);  }
+  88%  { opacity: 0.6; transform: translateX(-50%) translateY(-38px);}
+  100% { opacity: 0; transform: translateX(-50%) translateY(-44px);  }
+}
+
+/* ════════════════════════════════════════
+   ─── Wardrobe Rarity Borders ───
+   ════════════════════════════════════════ */
+.wardrobe-item.wardrobe-rarity-common:not(.wardrobe-item-selected):not(.wardrobe-item-locked) {
+  border-color: #C0B8C8;
+}
+.wardrobe-item.wardrobe-rarity-rare:not(.wardrobe-item-selected):not(.wardrobe-item-locked) {
+  border-color: #78A8D0; background: #F0F6FF;
+}
+.wardrobe-item.wardrobe-rarity-legendary:not(.wardrobe-item-selected):not(.wardrobe-item-locked) {
+  border-color: #D4A840; background: #FFFBEC;
+  box-shadow: 0 0 6px rgba(212,168,64,0.30);
+}
+/* selected overrides by rarity */
+.wardrobe-item.wardrobe-rarity-rare.wardrobe-item-selected {
+  border-color: #78A8D0 !important; background: #E4F0FC !important;
+}
+.wardrobe-item.wardrobe-rarity-legendary.wardrobe-item-selected {
+  border-color: #D4A840 !important; background: #FFF8DF !important;
+  box-shadow: 0 0 10px rgba(212,168,64,0.45);
+}
+
+/* ════════════════════════════════════════
+   ─── Unlock Celebration Overlay ───
+   ════════════════════════════════════════ */
+.unlock-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.48); z-index: 200;
+  display: flex; align-items: center; justify-content: center;
+}
+.unlock-card {
+  background: #fff; border-radius: 24px; padding: 32px 28px 28px;
+  width: 296px; text-align: center; position: relative; overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.22);
+}
+.unlock-title {
+  font-size: 17px; font-weight: 700; color: #5A5059; margin-bottom: 14px;
+}
+.unlock-emoji-anim {
+  margin: 0 0 10px;
+  animation: unlockBounce 0.7s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+.unlock-emoji { font-size: 68px; }
+@keyframes unlockBounce {
+  0%   { opacity: 0; transform: scale(0.2) rotate(-30deg); }
+  55%  { opacity: 1; transform: scale(1.18) rotate(8deg); }
+  75%  { transform: scale(0.92) rotate(-4deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+.unlock-item-label {
+  font-size: 20px; font-weight: 700; color: #5A5059; margin-bottom: 6px;
+}
+.unlock-rarity-badge {
+  display: inline-block; border-radius: 20px; padding: 3px 14px;
+  font-size: 13px; margin-bottom: 18px;
+}
+.rarity-badge-common    { background: #F0EBE7; color: #9A8C98; }
+.rarity-badge-rare      { background: #E4EFFF; color: #3A78B0; }
+.rarity-badge-legendary { background: #FFF6DC; color: #B08020; }
+.unlock-close-btn { margin-top: 0; }
+
+/* ─── Confetti ─── */
+.unlock-confetti { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.confetti-piece {
+  position: absolute; font-size: 18px; opacity: 0;
+  animation: confettiFall 2.2s ease-out forwards;
+  animation-delay: calc(var(--i) * 0.11s);
+}
+@keyframes confettiFall {
+  0%   { opacity: 0; transform: translateY(0)     rotate(0deg);   }
+  8%   { opacity: 1; }
+  100% { opacity: 0; transform: translateY(340px) rotate(660deg); }
+}
