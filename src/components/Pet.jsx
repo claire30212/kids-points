@@ -46,6 +46,7 @@ export default function Pet({ kid, totalEarned }) {
   const pet = PETS[kid.pet_type] || PETS.cat
   const level = getPetLevel(totalEarned)
   const nextLevel = getNextLevel(totalEarned)
+  const levelIdx = PET_LEVELS.findIndex(l => l === level)
 
   // Refresh from DB on mount (Pet unmounts when switching tabs, lsKey persists)
   useEffect(() => {
@@ -101,7 +102,53 @@ export default function Pet({ kid, totalEarned }) {
     <div className="section pet-section">
 
       {/* ── Pet Display ── */}
-      <div className="pet-habitat" style={{ background: level.habitatBg }}>
+      <div className={`pet-habitat habitat-lv${levelIdx}`}>
+
+        {/* Scene layer – must be first child (lowest z-order) */}
+        <div className="habitat-scene" aria-hidden="true">
+          {levelIdx === 0 && <>
+            <div className="sc-grass" />
+            <div className="sc-cloud" style={{top:'16%',left:'8%'}} />
+            <div className="sc-cloud sc-cloud-sm" style={{top:'10%',right:'12%'}} />
+            <div className="sc-cloud sc-cloud-sm" style={{top:'22%',left:'38%'}} />
+          </>}
+          {levelIdx === 1 && <>
+            <div className="sc-hut" />
+            <div className="sc-star" style={{top:'18%',left:'16%'}} />
+            <div className="sc-star" style={{top:'24%',right:'20%',animationDelay:'1.2s'}} />
+          </>}
+          {levelIdx === 2 && <>
+            <div className="sc-house">
+              <div className="sc-win" />
+              <div className="sc-win sc-win-r" />
+            </div>
+            <div className="sc-cloud sc-cloud-drift" style={{top:'18%',left:'6%'}} />
+            <div className="sc-bird" style={{top:'26%',right:'16%'}} />
+            <div className="sc-bird sc-bird-sm" style={{top:'20%',right:'26%'}} />
+          </>}
+          {levelIdx === 3 && <>
+            <div className="sc-castle-wrap">
+              <div className="sc-tower sc-tower-s" />
+              <div className="sc-tower sc-tower-c" />
+              <div className="sc-tower sc-tower-s" />
+            </div>
+            <div className="sc-star" style={{top:'14%',left:'12%'}} />
+            <div className="sc-star" style={{top:'20%',right:'14%',animationDelay:'0.7s'}} />
+            <div className="sc-star sc-star-sm" style={{top:'10%',left:'44%',animationDelay:'1.4s'}} />
+            <div className="sc-star sc-star-sm" style={{top:'30%',left:'22%',animationDelay:'0.3s'}} />
+          </>}
+          {levelIdx === 4 && <>
+            <div className="sc-glow" />
+            <div className="sc-temple-wrap">
+              <div className="sc-pillar" />
+              <div className="sc-pillar sc-pillar-lg" />
+              <div className="sc-pillar" />
+              <div className="sc-pillar sc-pillar-lg" />
+              <div className="sc-pillar" />
+            </div>
+          </>}
+        </div>
+
         <div className="pet-habitat-label">{level.habitat} {level.habitatLabel}</div>
 
         {level.items.map((item, i) => (

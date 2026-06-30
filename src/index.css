@@ -342,7 +342,7 @@ button { cursor: pointer; border: none; font-family: inherit; }
 .pet-habitat {
   border-radius: 20px; padding: 20px; text-align: center; position: relative;
   min-height: 200px; display: flex; flex-direction: column; align-items: center;
-  justify-content: center; margin-bottom: 16px; transition: background .5s;
+  justify-content: center; margin-bottom: 16px; transition: background .5s, box-shadow .5s;
 }
 .pet-habitat-label {
   position: absolute; top: 12px; left: 16px; font-size: 12px; color: #A09098;
@@ -491,3 +491,163 @@ button { cursor: pointer; border: none; font-family: inherit; }
   animation: toastIn .25s ease;
 }
 @keyframes toastIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+
+/* ════════════════════════════════════════
+   ─── Habitat Level Backgrounds ───
+   ════════════════════════════════════════ */
+.habitat-lv0 { background: linear-gradient(180deg, #E8F5E0 0%, #FDF8F0 100%); }
+.habitat-lv1 { background: linear-gradient(180deg, #FFE8D0 0%, #FDF8F0 100%); }
+.habitat-lv2 { background: linear-gradient(180deg, #D8E8F5 0%, #FDF8F0 100%); }
+.habitat-lv3 { background: linear-gradient(180deg, #E8D8F0 0%, #FDF8F0 100%); }
+.habitat-lv4 {
+  background: linear-gradient(135deg, #FFF4D0 0%, #FFE8B0 50%, #FDF8F0 100%);
+  animation: templeBreath 3s ease-in-out infinite;
+}
+@keyframes templeBreath {
+  0%,100% { box-shadow: 0 0 0 0 rgba(255,200,60,0); }
+  50%      { box-shadow: 0 0 28px 6px rgba(255,200,60,0.3); }
+}
+
+/* ════════════════════════════════════════
+   ─── Habitat Scene Layer ───
+   ════════════════════════════════════════ */
+.habitat-scene {
+  position: absolute; inset: 0; overflow: hidden;
+  border-radius: 20px; pointer-events: none;
+}
+
+/* ── Lv0: Grass ── */
+.sc-grass {
+  position: absolute; bottom: 0; left: -5%; right: -5%; height: 40px;
+  background: linear-gradient(180deg, #B8D4A0 0%, #9CC48A 100%);
+  border-radius: 50% 50% 0 0;
+  opacity: 0.65;
+}
+
+/* ── Clouds ── */
+.sc-cloud {
+  position: absolute;
+  width: 54px; height: 18px;
+  background: rgba(255,255,255,0.78); border-radius: 20px;
+}
+.sc-cloud::before {
+  content: ''; position: absolute;
+  width: 26px; height: 26px; top: -14px; left: 8px;
+  background: rgba(255,255,255,0.78); border-radius: 50%;
+}
+.sc-cloud::after {
+  content: ''; position: absolute;
+  width: 18px; height: 18px; top: -9px; right: 8px;
+  background: rgba(255,255,255,0.78); border-radius: 50%;
+}
+.sc-cloud-sm { width: 36px; height: 13px; }
+.sc-cloud-sm::before { width: 17px; height: 17px; top: -10px; left: 5px; }
+.sc-cloud-sm::after  { width: 13px; height: 13px; top: -7px;  right: 5px; }
+.sc-cloud-drift { animation: cloudDrift 8s ease-in-out infinite; }
+@keyframes cloudDrift { 0%,100%{transform:translateX(0)} 50%{transform:translateX(10px)} }
+
+/* ── Twinkling Stars ── */
+.sc-star {
+  position: absolute; width: 10px; height: 10px;
+  background: #FFD060;
+  clip-path: polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
+  animation: twinkle 2.4s ease-in-out infinite;
+}
+.sc-star-sm { width: 7px; height: 7px; }
+@keyframes twinkle { 0%,100%{opacity:0.2;transform:scale(0.75)} 50%{opacity:1;transform:scale(1.15)} }
+
+/* ── Lv1: Small Hut ── */
+.sc-hut {
+  position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 48px; height: 26px; background: #DDB88A;
+}
+.sc-hut::before {
+  content: ''; position: absolute;
+  bottom: 100%; left: 50%; transform: translateX(-50%);
+  width: 0; height: 0;
+  border-left: 30px solid transparent;
+  border-right: 30px solid transparent;
+  border-bottom: 20px solid #C4906A;
+}
+.sc-hut::after {
+  content: ''; position: absolute;
+  bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 12px; height: 16px;
+  background: #8B6040; border-radius: 6px 6px 0 0;
+}
+
+/* ── Lv2: House with windows ── */
+.sc-house {
+  position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 66px; height: 36px; background: #C8BCA8;
+}
+.sc-house::before {
+  content: ''; position: absolute;
+  bottom: 100%; left: 50%; transform: translateX(-50%);
+  width: 0; height: 0;
+  border-left: 40px solid transparent;
+  border-right: 40px solid transparent;
+  border-bottom: 26px solid #A89880;
+}
+.sc-house::after {
+  content: ''; position: absolute;
+  bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 13px; height: 20px;
+  background: #7A6050; border-radius: 6px 6px 0 0;
+}
+.sc-win {
+  position: absolute; top: 6px; left: 8px;
+  width: 13px; height: 12px;
+  background: #A8C8E0; border-radius: 2px; opacity: 0.85;
+}
+.sc-win-r { left: auto; right: 8px; }
+
+/* ── Lv2: Birds (V-shape) ── */
+.sc-bird { position: absolute; width: 20px; height: 8px; opacity: 0.45; }
+.sc-bird::before, .sc-bird::after {
+  content: ''; position: absolute;
+  top: 0; width: 10px; height: 7px;
+  border-top: 2px solid #6A8898;
+  border-radius: 50% 50% 0 0;
+}
+.sc-bird::before { left: 0; }
+.sc-bird::after  { right: 0; }
+.sc-bird-sm { width: 14px; height: 6px; }
+.sc-bird-sm::before, .sc-bird-sm::after { width: 7px; height: 5px; }
+
+/* ── Lv3: Castle Towers ── */
+.sc-castle-wrap {
+  position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+  display: flex; align-items: flex-end; gap: 4px;
+}
+.sc-tower { position: relative; background: #B0A0C0; flex-shrink: 0; }
+.sc-tower::before {
+  content: ''; position: absolute;
+  bottom: 100%; left: 50%; transform: translateX(-50%);
+  width: 0; height: 0;
+  border-style: solid;
+  border-color: transparent transparent #9888B0 transparent;
+}
+.sc-tower-s         { width: 22px; height: 30px; }
+.sc-tower-s::before { border-width: 0 14px 14px 14px; }
+.sc-tower-c         { width: 30px; height: 44px; }
+.sc-tower-c::before { border-width: 0 18px 18px 18px; }
+
+/* ── Lv4: Temple Glow + Pillars ── */
+.sc-glow {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 72%, rgba(255,215,60,0.22) 0%, rgba(255,215,60,0.07) 45%, transparent 70%);
+  animation: glowBreathe 3s ease-in-out infinite;
+}
+@keyframes glowBreathe { 0%,100%{opacity:0.55} 50%{opacity:1} }
+
+.sc-temple-wrap {
+  position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+  display: flex; align-items: flex-end; gap: 5px; padding: 0 2px;
+}
+.sc-pillar {
+  width: 10px; height: 40px; flex-shrink: 0;
+  background: linear-gradient(180deg, #F5E090 0%, #D4A840 100%);
+  border-radius: 2px 2px 0 0;
+}
+.sc-pillar-lg { width: 12px; height: 52px; }
