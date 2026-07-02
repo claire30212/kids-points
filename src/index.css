@@ -445,6 +445,25 @@ button { cursor: pointer; border: none; font-family: inherit; }
   font-size: 12px; color: #A09098; margin-top: 6px; text-align: right;
 }
 
+/* ─── Week Status Message ─── */
+.week-status-msg { font-size: 13px; font-weight: 600; margin-top: 8px; }
+.status-achieved { color: #4A9060; }
+.status-encourage { color: #C97F3A; }
+.status-warning { color: #C0504D; }
+.status-final-day { color: #C0302D; font-weight: 700; }
+
+/* ─── Week Penalty Hint ─── */
+.week-penalty-hint { font-size: 12px; color: #A09098; margin-top: 4px; }
+.week-penalty-hint.penalty-final-day { color: #C0302D; font-weight: 700; font-size: 13px; }
+
+/* ─── Kid Card Week Tag ─── */
+.kid-card-week-tag {
+  display: inline-block; font-size: 11px; font-weight: 600;
+  border-radius: 10px; padding: 2px 8px; margin: 4px 0;
+}
+.kid-card-week-tag.tag-achieved { background: #EAF5EE; color: #4A9060; }
+.kid-card-week-tag.tag-behind { background: #FFF0F0; color: #C0504D; }
+
 /* ─── Pet Overlay ─── */
 .pet-overlay-wrap {
   position: relative;
@@ -823,6 +842,38 @@ button { cursor: pointer; border: none; font-family: inherit; }
 .rarity-badge-rare      { background: #E4EFFF; color: #3A78B0; }
 .rarity-badge-legendary { background: #FFF6DC; color: #B08020; }
 .unlock-close-btn { margin-top: 0; }
+
+/* ════════════════════════════════════════
+   ─── Scene Picker ───
+   ════════════════════════════════════════ */
+.pet-scenes { margin-bottom: 20px; }
+.scene-scroll {
+  display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
+}
+.scene-card {
+  flex-shrink: 0; width: 78px; background: none; border: 2px solid transparent;
+  border-radius: 14px; padding: 6px; font-family: inherit; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  transition: all .15s;
+}
+.scene-card:hover:not(.scene-card-locked) { background: #F7F4F2; }
+.scene-card.scene-card-selected { border-color: #C4B5D4; background: #F5F0FC; }
+.scene-card.scene-card-locked { cursor: default; opacity: .7; }
+.scene-swatch {
+  width: 60px; height: 60px; border-radius: 12px; position: relative;
+  display: flex; align-items: center; justify-content: center;
+}
+.scene-lock { font-size: 18px; }
+.scene-label { font-size: 11px; color: #5A5059; font-weight: 500; text-align: center; }
+.scene-condition { font-size: 10px; color: #A09098; text-align: center; }
+.scene-card.scene-card-locked .scene-label,
+.scene-card.scene-card-locked .scene-condition { color: #BBA8B5; }
+
+.unlock-scene-swatch {
+  width: 90px; height: 90px; border-radius: 16px; margin: 0 auto;
+  animation: unlockBounce 0.7s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
 
 /* ─── Confetti ─── */
 .unlock-confetti { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }

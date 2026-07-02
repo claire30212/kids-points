@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { supabase } from '../lib/supabase'
-import { PETS, PET_LEVELS, PET_MSGS, ACCESSORIES, getPetLevel, getNextLevel } from '../lib/constants'
+import { PETS, PET_LEVELS, PET_MSGS, ACCESSORIES, SCENES, getPetLevel, getNextLevel } from '../lib/constants'
 import { useToast } from '../lib/toast'
 
 const RARITY_ORDER = { common: 0, rare: 1, legendary: 2 }
@@ -21,16 +21,18 @@ const SLOT_LABEL = { head: '頭部', face: '臉部', neck: '頸部' }
 const EQUIP_POS = {
   '🎩': { position: 'absolute', top: '-24px', left: '50%', transform: 'translateX(-50%)', fontSize: '28px', zIndex: 3 },
   '👑': { position: 'absolute', top: '-38px', left: '50%', transform: 'translateX(-50%)', fontSize: '24px', zIndex: 3 },
+  '⛑️': { position: 'absolute', top: '-32px', left: '50%', transform: 'translateX(-50%)', fontSize: '26px', zIndex: 3 },
   '🎓': { position: 'absolute', top: '-28px', left: '50%', transform: 'translateX(-50%)', fontSize: '26px', zIndex: 3 },
   '😇': { position: 'absolute', top: '-44px', left: '50%', transform: 'translateX(-50%)', fontSize: '22px', zIndex: 3 },
-  '🎪': { position: 'absolute', top: '-30px', left: '50%', transform: 'translateX(-50%)', fontSize: '26px', zIndex: 3 },
+  '🪖': { position: 'absolute', top: '-34px', left: '50%', transform: 'translateX(-50%)', fontSize: '24px', zIndex: 3 },
   '🕶️': { position: 'absolute', top: '20px',  left: '50%', transform: 'translateX(-50%)', fontSize: '22px', zIndex: 3 },
   '🥽': { position: 'absolute', top: '18px',  left: '50%', transform: 'translateX(-50%)', fontSize: '22px', zIndex: 3 },
   '👓': { position: 'absolute', top: '20px',  left: '50%', transform: 'translateX(-50%)', fontSize: '20px', zIndex: 3 },
+  '🎭': { position: 'absolute', top: '18px',  left: '50%', transform: 'translateX(-50%)', fontSize: '24px', zIndex: 3 },
   '🎀': { position: 'absolute', top: '56px',  left: '50%', transform: 'translateX(-50%)', fontSize: '20px', zIndex: 3 },
   '🧣': { position: 'absolute', top: '54px',  left: '50%', transform: 'translateX(-50%)', fontSize: '20px', zIndex: 3 },
   '💎': { position: 'absolute', top: '58px',  left: '50%', transform: 'translateX(-50%)', fontSize: '18px', zIndex: 3 },
-  '🌟': { position: 'absolute', top: '56px',  left: '50%', transform: 'translateX(-50%)', fontSize: '18px', zIndex: 3 },
+  '🏅': { position: 'absolute', top: '56px',  left: '50%', transform: 'translateX(-50%)', fontSize: '18px', zIndex: 3 },
 }
 
 const CORNER_STYLES = [
@@ -60,17 +62,28 @@ export default function Pet({ kid, totalEarned }) {
   const [sleepAnim, setSleepAnim]  = useState(false)
   const [feedAnim, setFeedAnim] = useState(false)
   const [playAnim, setPlayAnim] = useState(false)
-  const [celebration, setCelebration] = useState(null)
+  const [celebrationQueue, setCelebrationQueue] = useState([])
+  const celebration = celebrationQueue[0] || null
+
+  const wardrobeRef = useRef(null)
+  const sceneRef = useRef(null)
 
   const lsKey        = `equipped_${kid.id}`
   const moodLsKey    = `mood_${kid.id}`
   const moodTsLsKey  = `mood_ts_${kid.id}`
   const notifiedLsKey = `notified_acc_${kid.id}`
+  const sceneLsKey    = `scene_${kid.id}`
+  const notifiedSceneLsKey = `notified_scene_${kid.id}`
 
   const [equipped, setEquipped] = useState(() => {
     if (kid.equipped_accessories && typeof kid.equipped_accessories === 'object')
       return kid.equipped_accessories
     try { return JSON.parse(localStorage.getItem(lsKey) || '{}') } catch { return {} }
+  })
+
+  const [selectedScene, setSelectedScene] = useState(() => {
+    if (kid.selected_scene) return kid.selected_scene
+    return localStorage.getItem(sceneLsKey) || 'grassland'
   })
 
   const [mood, setMood] = useState(() => {
@@ -88,7 +101,7 @@ export default function Pet({ kid, totalEarned }) {
   useEffect(() => {
     supabase
       .from('kp_kids')
-      .select('equipped_accessories, pet_mood, pet_mood_updated_at')
+      .select('equipped_accessories, pet_mood, pet_mood_updated_at, selected_scene')
       .eq('id', kid.id)
       .single()
       .then(({ data, error }) => {
@@ -114,6 +127,16 @@ export default function Pet({ kid, totalEarned }) {
               } catch {}
             }
           }
+          if (data.selected_scene) {
+            setSelectedScene(data.selected_scene)
+            localStorage.setItem(sceneLsKey, data.selected_scene)
+          } else {
+            const lsScene = localStorage.getItem(sceneLsKey)
+            if (lsScene && lsScene !== 'grassland') {
+              setSelectedScene(lsScene)
+              supabase.from('kp_kids').update({ selected_scene: lsScene }).eq('id', kid.id).then(() => {})
+            }
+          }
           const base = typeof data.pet_mood === 'number' ? data.pet_mood : mood
           const ts   = data.pet_mood_updated_at
             ? new Date(data.pet_mood_updated_at)
@@ -128,19 +151,48 @@ export default function Pet({ kid, totalEarned }) {
         }
       })
 
-    // Unlock celebration check
-    const notified = JSON.parse(localStorage.getItem(notifiedLsKey) || '[]')
-    const newUnlocks = Object.entries(ACCESSORIES)
-      .filter(([key, acc]) => totalEarned >= acc.unlockAt && !notified.includes(key))
-    if (newUnlocks.length > 0) {
-      const [key, acc] = newUnlocks[0]
-      setCelebration({ key, ...acc })
-      // Mark all newly-unlocked as notified at once
-      localStorage.setItem(notifiedLsKey, JSON.stringify([
-        ...notified, ...newUnlocks.map(([k]) => k)
-      ]))
+    // Unlock celebration check — accessories + scenes share one queue
+    const notifiedAcc = JSON.parse(localStorage.getItem(notifiedLsKey) || '[]')
+    const newAccUnlocks = Object.entries(ACCESSORIES)
+      .filter(([key, acc]) => totalEarned >= acc.unlockAt && !notifiedAcc.includes(key))
+    const notifiedScenes = JSON.parse(localStorage.getItem(notifiedSceneLsKey) || '[]')
+    const newSceneUnlocks = SCENES
+      .filter(s => totalEarned >= s.unlockAt && !notifiedScenes.includes(s.id))
+
+    const queue = [
+      ...newAccUnlocks.map(([key, acc]) => ({ type: 'accessory', key, ...acc })),
+      ...newSceneUnlocks.map(s => ({ type: 'scene', key: s.id, ...s })),
+    ].sort((a, b) => a.unlockAt - b.unlockAt)
+
+    if (queue.length > 0) {
+      setCelebrationQueue(queue)
+      if (newAccUnlocks.length > 0) {
+        localStorage.setItem(notifiedLsKey, JSON.stringify([
+          ...notifiedAcc, ...newAccUnlocks.map(([k]) => k)
+        ]))
+      }
+      if (newSceneUnlocks.length > 0) {
+        localStorage.setItem(notifiedSceneLsKey, JSON.stringify([
+          ...notifiedScenes, ...newSceneUnlocks.map(s => s.id)
+        ]))
+      }
     }
   }, [kid.id]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  function advanceCelebration() {
+    const current = celebrationQueue[0]
+    setCelebrationQueue(q => q.slice(1))
+    if (celebrationQueue.length <= 1 && current) {
+      const target = current.type === 'scene' ? sceneRef : wardrobeRef
+      setTimeout(() => target.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100)
+    }
+  }
+
+  function saveScene(sceneId) {
+    setSelectedScene(sceneId)
+    localStorage.setItem(sceneLsKey, sceneId)
+    supabase.from('kp_kids').update({ selected_scene: sceneId }).eq('id', kid.id).then(() => {})
+  }
 
   function applyDecay(base, updatedAt) {
     const days = Math.floor((Date.now() - updatedAt.getTime()) / 86400000)
@@ -217,30 +269,42 @@ export default function Pet({ kid, totalEarned }) {
   return (
     <div className="section pet-section">
 
-      {/* ── Unlock Celebration Overlay ── */}
+      {/* ── Unlock Celebration Overlay (accessories + scenes share one queue) ── */}
       {celebration && (
-        <div className="unlock-overlay" onClick={() => setCelebration(null)}>
+        <div className="unlock-overlay" onClick={advanceCelebration}>
           <div className="unlock-card" onClick={e => e.stopPropagation()}>
             <div className="unlock-confetti" aria-hidden="true">
               {CONFETTI.map(({ e, left }, i) => (
                 <span key={i} className="confetti-piece" style={{ '--i': i, left, top: '-10%' }}>{e}</span>
               ))}
             </div>
-            <div className="unlock-title">✨ 解鎖新配件！</div>
-            <div className="unlock-emoji-anim">
-              <span className="unlock-emoji">{celebration.emoji}</span>
-            </div>
-            <div className="unlock-item-label">{celebration.label}</div>
-            <div className={`unlock-rarity-badge rarity-badge-${celebration.rarity}`}>
-              {RARITY_LABEL[celebration.rarity]}
-            </div>
-            <button className="btn-primary unlock-close-btn" onClick={() => setCelebration(null)}>太棒了！</button>
+            {celebration.type === 'scene' ? (
+              <>
+                <div className="unlock-title">🌍 新場景解鎖！</div>
+                <div className="unlock-emoji-anim">
+                  <div className="unlock-scene-swatch" style={{ background: celebration.bg }} />
+                </div>
+                <div className="unlock-item-label">{celebration.label}</div>
+              </>
+            ) : (
+              <>
+                <div className="unlock-title">✨ 新配件解鎖！</div>
+                <div className="unlock-emoji-anim">
+                  <span className="unlock-emoji">{celebration.emoji}</span>
+                </div>
+                <div className="unlock-item-label">{celebration.label}</div>
+                <div className={`unlock-rarity-badge rarity-badge-${celebration.rarity}`}>
+                  {RARITY_LABEL[celebration.rarity]}
+                </div>
+              </>
+            )}
+            <button className="btn-primary unlock-close-btn" onClick={advanceCelebration}>太棒了！去看看 →</button>
           </div>
         </div>
       )}
 
       {/* ── Pet Habitat ── */}
-      <div className={`pet-habitat habitat-lv${levelIdx}`}>
+      <div className={`pet-habitat habitat-lv${levelIdx}`} style={{ background: SCENES.find(s => s.id === selectedScene)?.bg }}>
 
         {/* Scene layer – first child so it stays at back */}
         <div className="habitat-scene" aria-hidden="true">
@@ -353,8 +417,36 @@ export default function Pet({ kid, totalEarned }) {
         <button className="pet-action-btn" onClick={() => interact('sleep')} disabled={sleepAnim || feedAnim || playAnim}>😴 休息</button>
       </div>
 
+      {/* ── Scene Picker ── */}
+      <div className="pet-scenes" ref={sceneRef}>
+        <div className="task-group-title">🌍 我的場景</div>
+        <div className="scene-scroll">
+          {SCENES.map(scene => {
+            const isUnlocked = totalEarned >= scene.unlockAt
+            const isSelected = selectedScene === scene.id
+            return (
+              <button
+                key={scene.id}
+                className={`scene-card ${isSelected ? 'scene-card-selected' : ''} ${!isUnlocked ? 'scene-card-locked' : ''}`}
+                style={isSelected ? { borderColor: kid.color } : {}}
+                onClick={() => {
+                  if (!isUnlocked) { toast(`累積 ${scene.unlockAt} 分解鎖「${scene.label}」`); return }
+                  saveScene(scene.id)
+                }}
+              >
+                <div className="scene-swatch" style={{ background: isUnlocked ? scene.bg : '#D8D2D6' }}>
+                  {!isUnlocked && <span className="scene-lock">🔒</span>}
+                </div>
+                <div className="scene-label">{scene.label}</div>
+                <div className="scene-condition">{isUnlocked ? scene.description : `累積 ${scene.unlockAt} 分解鎖`}</div>
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
       {/* ── Wardrobe ── */}
-      <div className="pet-wardrobe">
+      <div className="pet-wardrobe" ref={wardrobeRef}>
         <div className="task-group-title">🎒 我的衣櫃</div>
         {Object.entries(ACC_BY_SLOT).map(([slot, items]) => (
           <div key={slot} className="wardrobe-row">

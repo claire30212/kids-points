@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
-import { calcScore, calcWeekPts, calcTotalEarned, PETS } from '../lib/constants'
+import { calcScore, calcWeekPts, calcTotalEarned, PETS, isWeekend, isSunday } from '../lib/constants'
 import TaskBoard from '../components/TaskBoard'
 import RewardShop from '../components/RewardShop'
 import Pet from '../components/Pet'
@@ -27,7 +27,12 @@ export default function KidView({ kid, isParent, onBack, onLogout }) {
   const weekPts = calcWeekPts(history)
   const totalEarned = calcTotalEarned(history)
   const pet = PETS[kid.pet_type] || PETS.cat
-  const weekPct = Math.min(100, Math.round((weekPts / (kid.week_goal || 50)) * 100))
+  const weekGoal = kid.week_goal || 50
+  const weekPct = Math.min(100, Math.round((weekPts / weekGoal) * 100))
+  const achieved = weekPts >= weekGoal
+  const shortBy = Math.max(0, weekGoal - weekPts)
+  const weekend = isWeekend()
+  const sunday = isSunday()
 
   return (
     <div className="page">
@@ -53,6 +58,23 @@ export default function KidView({ kid, isParent, onBack, onLogout }) {
         <div className="week-progress-bar">
           <div className="week-progress-fill" style={{ width: weekPct + '%', background: kid.color }} />
         </div>
+
+        {achieved ? (
+          <div className="week-status-msg status-achieved">🎊 本週已達標！繼續累積積分吧</div>
+        ) : sunday ? (
+          <div className="week-status-msg status-final-day">
+            🚨 今天是最後一天！{kid.week_penalty ? `未達標懲罰：${kid.week_penalty}` : `還差 ${shortBy} 分達標`}
+          </div>
+        ) : weekend ? (
+          <div className="week-status-msg status-warning">
+            ⚠️ 快達標！還差 {shortBy} 分{kid.week_penalty ? `，未達標懲罰：${kid.week_penalty}` : ''}
+          </div>
+        ) : (
+          <div className="week-status-msg status-encourage">
+            💪 本週加油！還差 {shortBy} 分達標{kid.week_penalty ? `，未達標懲罰：${kid.week_penalty}` : ''}
+          </div>
+        )}
+
         {taskStats && taskStats.total > 0 && (
           <div className="daily-completion-hint">
             今日每日任務：{taskStats.completed}／{taskStats.total} 項完成

@@ -3,21 +3,33 @@ export const PETS = {
   cat:{e:'🐱',n:'貓咪'}, dog:{e:'🐶',n:'狗狗'}, rabbit:{e:'🐰',n:'兔兔'},
   dino:{e:'🦕',n:'恐龍'}, duck:{e:'🐥',n:'小鴨'}, monster:{e:'👾',n:'怪獸'}
 }
-// 12 accessories across 3 rarities; slot = head|face|neck; unlockAt = cumulative earned score
+// 14 accessories across 3 rarities; slot = head|face|neck; unlockAt = cumulative earned score
 export const ACCESSORIES = {
-  hat1:     { emoji: '🎩', slot: 'head', rarity: 'common',    unlockAt: 5,  label: '紳士帽' },
-  glasses1: { emoji: '🕶️', slot: 'face', rarity: 'common',    unlockAt: 5,  label: '墨鏡' },
-  bow1:     { emoji: '🎀', slot: 'neck', rarity: 'common',    unlockAt: 5,  label: '蝴蝶結' },
-  crown1:   { emoji: '👑', slot: 'head', rarity: 'rare',      unlockAt: 20, label: '皇冠' },
-  glasses2: { emoji: '🥽', slot: 'face', rarity: 'rare',      unlockAt: 20, label: '護目鏡' },
-  scarf1:   { emoji: '🧣', slot: 'neck', rarity: 'rare',      unlockAt: 20, label: '圍巾' },
-  hat2:     { emoji: '🎓', slot: 'head', rarity: 'rare',      unlockAt: 20, label: '學士帽' },
-  halo1:    { emoji: '😇', slot: 'head', rarity: 'legendary', unlockAt: 40, label: '光環' },
-  glasses3: { emoji: '👓', slot: 'face', rarity: 'legendary', unlockAt: 40, label: '智慧眼鏡' },
-  necklace1:{ emoji: '💎', slot: 'neck', rarity: 'legendary', unlockAt: 40, label: '鑽石項鍊' },
-  hat3:     { emoji: '🎪', slot: 'head', rarity: 'legendary', unlockAt: 40, label: '馬戲團帽' },
-  bow2:     { emoji: '🌟', slot: 'neck', rarity: 'legendary', unlockAt: 40, label: '星星墜飾' },
+  hat1:      { emoji: '🎩', slot: 'head', rarity: 'common',    unlockAt: 5,  label: '紳士帽' },
+  glasses1:  { emoji: '🕶️', slot: 'face', rarity: 'common',    unlockAt: 5,  label: '墨鏡' },
+  bow1:      { emoji: '🎀', slot: 'neck', rarity: 'common',    unlockAt: 5,  label: '蝴蝶結' },
+  crown1:    { emoji: '👑', slot: 'head', rarity: 'rare',      unlockAt: 20, label: '皇冠' },
+  helmet1:   { emoji: '⛑️', slot: 'head', rarity: 'rare',      unlockAt: 20, label: '英雄頭盔' },
+  glasses2:  { emoji: '🥽', slot: 'face', rarity: 'rare',      unlockAt: 20, label: '護目鏡' },
+  scarf1:    { emoji: '🧣', slot: 'neck', rarity: 'rare',      unlockAt: 20, label: '圍巾' },
+  hat2:      { emoji: '🎓', slot: 'head', rarity: 'rare',      unlockAt: 20, label: '學士帽' },
+  halo1:     { emoji: '😇', slot: 'head', rarity: 'legendary', unlockAt: 40, label: '光環' },
+  helmet2:   { emoji: '🪖', slot: 'head', rarity: 'legendary', unlockAt: 40, label: '勇者頭盔' },
+  glasses3:  { emoji: '👓', slot: 'face', rarity: 'legendary', unlockAt: 40, label: '智慧眼鏡' },
+  medal1:    { emoji: '🏅', slot: 'neck', rarity: 'legendary', unlockAt: 40, label: '勛章' },
+  necklace1: { emoji: '💎', slot: 'neck', rarity: 'legendary', unlockAt: 40, label: '鑽石項鍊' },
+  glasses4:  { emoji: '🎭', slot: 'face', rarity: 'legendary', unlockAt: 40, label: '派對眼鏡' },
 }
+// 7 unlockable pet-habitat scenes; unlockAt = cumulative earned score
+export const SCENES = [
+  { id: 'grassland',     label: '🌱 草地',     unlockAt: 0,   bg: 'linear-gradient(180deg,#E8F5E0,#FDF8F0)', description: '初始場景' },
+  { id: 'cozy_home',     label: '🏡 溫馨小屋', unlockAt: 5,   bg: 'linear-gradient(180deg,#FFE8D0,#FDF8F0)', description: '5分解鎖' },
+  { id: 'beach',         label: '🏖️ 海邊度假', unlockAt: 70,  bg: 'linear-gradient(180deg,#B8E0F5,#FFF8E8)', description: '70分解鎖' },
+  { id: 'space',         label: '🚀 太空冒險', unlockAt: 120, bg: 'linear-gradient(180deg,#1A1A3E,#4A3878)',  description: '120分解鎖' },
+  { id: 'flower_garden', label: '🌸 花園秘境', unlockAt: 120, bg: 'linear-gradient(180deg,#FFD8E8,#F8FFE8)', description: '120分解鎖' },
+  { id: 'castle',        label: '🏰 夢幻城堡', unlockAt: 200, bg: 'linear-gradient(180deg,#E8D0FF,#FFF8F0)', description: '200分解鎖' },
+  { id: 'rainbow',       label: '🌈 彩虹神殿', unlockAt: 300, bg: 'linear-gradient(135deg,#FFD0D0,#FFFFC0,#C0FFC0,#C0D0FF)', description: '300分解鎖' },
+]
 export const PET_LEVELS = [
   {min:0, label:'初生', acc:[],                    habitat:'🌱',habitatLabel:'空地',habitatBg:'#EFF8EE',items:[]},
   {min:5, label:'幼年', acc:['🎀'],                habitat:'🏡',habitatLabel:'小窩',habitatBg:'#FFF5E8',items:['🌸']},
@@ -48,6 +60,9 @@ export const getPetLevel = (total) => {
   return lv
 }
 export const getNextLevel = (total) => PET_LEVELS.find(l=>l.min>total)||null
+// 0=Sun...6=Sat
+export const isWeekend = (d=new Date()) => d.getDay()===0 || d.getDay()===6
+export const isSunday = (d=new Date()) => d.getDay()===0
 export const fmtTime = (ts) => {
   if(!ts)return''
   const d=new Date(ts)

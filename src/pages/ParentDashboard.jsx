@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { supabase } from '../lib/supabase'
 import { useToast } from '../lib/toast'
-import { COLORS, PETS, calcScore } from '../lib/constants'
+import { COLORS, PETS, calcScore, calcWeekPts } from '../lib/constants'
 import { LongPressDeleteBtn, focusScroll } from '../lib/ui'
 
 export default function ParentDashboard({ session, onSelectKid, onLogout }) {
@@ -76,6 +76,7 @@ function fmtDate(ts) {
 
 function KidCard({ kid, onSelect, onEdit, onDelete }) {
   const [score, setScore] = useState('...')
+  const [weekPts, setWeekPts] = useState(null)
   const [lastRedeem, setLastRedeem] = useState(undefined) // undefined = loading
 
   useEffect(() => {
@@ -83,18 +84,27 @@ function KidCard({ kid, onSelect, onEdit, onDelete }) {
       .eq('kid_id', kid.id).order('ts', { ascending: false })
       .then(({ data }) => {
         setScore(calcScore(data || []))
+        setWeekPts(calcWeekPts(data || []))
         const r = (data || []).find(h => h.type === 'spend' && h.note?.startsWith('兌換'))
         setLastRedeem(r || null)
       })
   }, [kid.id])
 
   const pet = PETS[kid.pet_type] || PETS.cat
+  const weekGoal = kid.week_goal || 0
+  const achieved = weekPts !== null && weekGoal > 0 && weekPts >= weekGoal
+  const shortBy = weekGoal > 0 && weekPts !== null ? Math.max(0, weekGoal - weekPts) : 0
 
   return (
     <div className="kid-card" style={{ borderColor: kid.color }}>
       <div className="kid-card-pet" style={{ background: kid.color + '33' }}>{pet.e}</div>
       <div className="kid-card-name">{kid.name}</div>
       <div className="kid-card-score">{score} 點</div>
+      {weekPts !== null && weekGoal > 0 && (
+        <div className={`kid-card-week-tag ${achieved ? 'tag-achieved' : 'tag-behind'}`}>
+          {achieved ? '🎊 本週已達標' : `⚠️ 未達標，差 ${shortBy} 分`}
+        </div>
+      )}
       <div className="kid-card-redeem">
         {lastRedeem === undefined
           ? ''
@@ -120,6 +130,7 @@ function KidForm({ familyId, kid, onClose, onSave }) {
   const [color, setColor] = useState(kid?.color || COLORS[0])
   const [petType, setPetType] = useState(kid?.pet_type || 'cat')
   const [weekGoal, setWeekGoal] = useState(kid?.week_goal ? String(kid.week_goal) : '')
+  const [weekPenalty, setWeekPenalty] = useState(kid?.week_penalty || '')
   const [saving, setSaving] = useState(false)
   const mouseDownTarget = useRef(null)
 
@@ -130,11 +141,11 @@ function KidForm({ familyId, kid, onClose, onSave }) {
     if (!weekGoalNum || weekGoalNum < 1) return toast('週目標至少 1 點')
     setSaving(true)
     if (kid) {
-      const { error } = await supabase.from('kp_kids').update({ name: name.trim(), pin, color, pet_type: petType, week_goal: weekGoalNum }).eq('id', kid.id)
+      const { error } = await supabase.from('kp_kids').update({ name: name.trim(), pin, color, pet_type: petType, week_goal: weekGoalNum, week_penalty: weekPenalty.trim() }).eq('id', kid.id)
       if (error) { toast('儲存失敗：' + error.message); setSaving(false); return }
       toast('已更新！')
     } else {
-      const { error } = await supabase.from('kp_kids').insert({ family_id: familyId, name: name.trim(), pin, color, pet_type: petType, week_goal: weekGoalNum })
+      const { error } = await supabase.from('kp_kids').insert({ family_id: familyId, name: name.trim(), pin, color, pet_type: petType, week_goal: weekGoalNum, week_penalty: weekPenalty.trim() })
       if (error) { toast('新增失敗：' + error.message); setSaving(false); return }
       toast('新增成功 🎉')
     }
@@ -170,6 +181,9 @@ function KidForm({ familyId, kid, onClose, onSave }) {
 
         <label className="field-label">週目標積分</label>
         <input className="input" type="text" inputMode="numeric" value={weekGoal} onChange={e => setWeekGoal(e.target.value)} onFocus={focusScroll} placeholder="例如：50" />
+
+        <label className="field-label">未達標懲罰（選填）</label>
+        <input className="input" value={weekPenalty} onChange={e => setWeekPenalty(e.target.value)} onFocus={focusScroll} placeholder="例如：本週零用錢扣50元" />
 
         <label className="field-label">顏色</label>
         <div className="color-picker">
