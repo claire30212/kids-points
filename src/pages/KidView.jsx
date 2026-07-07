@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
-import { calcScore, calcWeekPts, calcTotalEarned, PETS, isWeekend, isSunday } from '../lib/constants'
+import { calcScore, calcWeekPts, calcTotalEarned, PETS, isWeekend, isSunday, fmtTodayLabel } from '../lib/constants'
 import TaskBoard from '../components/TaskBoard'
 import RewardShop from '../components/RewardShop'
 import Pet from '../components/Pet'
@@ -55,8 +55,11 @@ export default function KidView({ kid, isParent, onBack, onLogout }) {
           <span>本週 {weekPts} / {kid.week_goal} 點</span>
           <span>{weekPct}%</span>
         </div>
-        <div className="week-progress-bar">
-          <div className="week-progress-fill" style={{ width: weekPct + '%', background: kid.color }} />
+        <div className="week-progress-bar-row">
+          <div className="week-progress-bar">
+            <div className="week-progress-fill" style={{ width: weekPct + '%', background: kid.color }} />
+          </div>
+          <span className="week-progress-date">{fmtTodayLabel()}</span>
         </div>
 
         {achieved ? (

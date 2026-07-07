@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { supabase } from '../lib/supabase'
-import { PETS, PET_LEVELS, PET_MSGS, ACCESSORIES, SCENES, getPetLevel, getNextLevel } from '../lib/constants'
+import { PETS, PET_LEVELS, PET_MSGS, ACCESSORIES, SCENES, LEVEL_FOODS, getPetLevel, getNextLevel } from '../lib/constants'
 import { useToast } from '../lib/toast'
 
 const RARITY_ORDER = { common: 0, rare: 1, legendary: 2 }
@@ -20,19 +20,29 @@ const SLOT_LABEL = { head: '頭部', face: '臉部', neck: '頸部' }
 // Overlay position per emoji relative to pet-overlay-wrap
 const EQUIP_POS = {
   '🎩': { position: 'absolute', top: '-24px', left: '50%', transform: 'translateX(-50%)', fontSize: '28px', zIndex: 3 },
-  '👑': { position: 'absolute', top: '-38px', left: '50%', transform: 'translateX(-50%)', fontSize: '24px', zIndex: 3 },
+  '👑': { position: 'absolute', top: '-34px', left: '50%', transform: 'translateX(-50%)', fontSize: '24px', zIndex: 3 },
   '⛑️': { position: 'absolute', top: '-32px', left: '50%', transform: 'translateX(-50%)', fontSize: '26px', zIndex: 3 },
   '🎓': { position: 'absolute', top: '-28px', left: '50%', transform: 'translateX(-50%)', fontSize: '26px', zIndex: 3 },
-  '😇': { position: 'absolute', top: '-44px', left: '50%', transform: 'translateX(-50%)', fontSize: '22px', zIndex: 3 },
+  '😇': { position: 'absolute', top: '-35px', left: '50%', transform: 'translateX(-50%)', fontSize: '22px', zIndex: 3 },
   '🪖': { position: 'absolute', top: '-34px', left: '50%', transform: 'translateX(-50%)', fontSize: '24px', zIndex: 3 },
+  '🌸': { position: 'absolute', top: '-20px', left: '50%', transform: 'translateX(-50%)', fontSize: '24px', zIndex: 3 },
+  '🌺': { position: 'absolute', top: '-20px', left: '50%', transform: 'translateX(-50%)', fontSize: '24px', zIndex: 3 },
+  '👮': { position: 'absolute', top: '-28px', left: '50%', transform: 'translateX(-50%)', fontSize: '26px', zIndex: 3 },
+  '🪷': { position: 'absolute', top: '-20px', left: '50%', transform: 'translateX(-50%)', fontSize: '24px', zIndex: 3 },
   '🕶️': { position: 'absolute', top: '20px',  left: '50%', transform: 'translateX(-50%)', fontSize: '22px', zIndex: 3 },
   '🥽': { position: 'absolute', top: '18px',  left: '50%', transform: 'translateX(-50%)', fontSize: '22px', zIndex: 3 },
   '👓': { position: 'absolute', top: '20px',  left: '50%', transform: 'translateX(-50%)', fontSize: '20px', zIndex: 3 },
   '🎭': { position: 'absolute', top: '18px',  left: '50%', transform: 'translateX(-50%)', fontSize: '24px', zIndex: 3 },
+  '🤿': { position: 'absolute', top: '18px',  left: '50%', transform: 'translateX(-50%)', fontSize: '22px', zIndex: 3 },
+  '🥸': { position: 'absolute', top: '20px',  left: '50%', transform: 'translateX(-50%)', fontSize: '22px', zIndex: 3 },
+  '😷': { position: 'absolute', top: '22px',  left: '50%', transform: 'translateX(-50%)', fontSize: '22px', zIndex: 3 },
   '🎀': { position: 'absolute', top: '56px',  left: '50%', transform: 'translateX(-50%)', fontSize: '20px', zIndex: 3 },
   '🧣': { position: 'absolute', top: '54px',  left: '50%', transform: 'translateX(-50%)', fontSize: '20px', zIndex: 3 },
   '💎': { position: 'absolute', top: '58px',  left: '50%', transform: 'translateX(-50%)', fontSize: '18px', zIndex: 3 },
   '🏅': { position: 'absolute', top: '56px',  left: '50%', transform: 'translateX(-50%)', fontSize: '18px', zIndex: 3 },
+  '👔': { position: 'absolute', top: '52px',  left: '50%', transform: 'translateX(-50%)', fontSize: '20px', zIndex: 3 },
+  '📿': { position: 'absolute', top: '58px',  left: '50%', transform: 'translateX(-50%)', fontSize: '18px', zIndex: 3 },
+  '🏵️': { position: 'absolute', top: '54px',  left: '50%', transform: 'translateX(-50%)', fontSize: '20px', zIndex: 3 },
 }
 
 const CORNER_STYLES = [
@@ -96,6 +106,7 @@ export default function Pet({ kid, totalEarned }) {
   const level    = getPetLevel(totalEarned)
   const nextLevel = getNextLevel(totalEarned)
   const levelIdx = PET_LEVELS.findIndex(l => l === level)
+  const feedFood = LEVEL_FOODS[levelIdx] || LEVEL_FOODS[0]
 
   // On mount: sync from DB, apply decay, check new unlock celebrations
   useEffect(() => {
@@ -220,7 +231,11 @@ export default function Pet({ kid, totalEarned }) {
   function interact(type) {
     if (sleepAnim || feedAnim || playAnim) return
 
-    showMsg(type)
+    if (type === 'feed') {
+      toast(`${feedFood.label} 好好吃！心情 +15 🌟`)
+    } else {
+      showMsg(type)
+    }
 
     if (type === 'sleep') {
       setSleepAnim(true)
@@ -355,7 +370,7 @@ export default function Pet({ kid, totalEarned }) {
         {sleepAnim && <span className="sleep-zzz" aria-hidden="true">💤</span>}
 
         {/* Feed animation: apple drops and gets eaten */}
-        {feedAnim && <span className="feed-apple" aria-hidden="true">🍎</span>}
+        {feedAnim && <span className="feed-apple" aria-hidden="true">{feedFood.emoji}</span>}
 
         {/* Play animation: ball bounces side to side */}
         {playAnim && <span className="play-ball" aria-hidden="true">⚽</span>}
@@ -412,7 +427,7 @@ export default function Pet({ kid, totalEarned }) {
 
       {/* ── Actions ── */}
       <div className="pet-actions">
-        <button className="pet-action-btn" onClick={() => interact('feed')} disabled={sleepAnim || feedAnim || playAnim}>🍎 餵食</button>
+        <button className="pet-action-btn" onClick={() => interact('feed')} disabled={sleepAnim || feedAnim || playAnim}>{feedFood.emoji} 餵食</button>
         <button className="pet-action-btn" onClick={() => interact('play')} disabled={sleepAnim || feedAnim || playAnim}>⚽ 玩耍</button>
         <button className="pet-action-btn" onClick={() => interact('sleep')} disabled={sleepAnim || feedAnim || playAnim}>😴 休息</button>
       </div>

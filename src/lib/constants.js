@@ -19,6 +19,24 @@ export const ACCESSORIES = {
   medal1:    { emoji: '🏅', slot: 'neck', rarity: 'legendary', unlockAt: 40, label: '勛章' },
   necklace1: { emoji: '💎', slot: 'neck', rarity: 'legendary', unlockAt: 40, label: '鑽石項鍊' },
   glasses4:  { emoji: '🎭', slot: 'face', rarity: 'legendary', unlockAt: 40, label: '派對眼鏡' },
+  flower1:   { emoji: '🌸', slot: 'head', rarity: 'common',    unlockAt: 5,  label: '花環' },
+  hairclip1: { emoji: '🌺', slot: 'head', rarity: 'common',    unlockAt: 5,  label: '髮夾' },
+  police1:   { emoji: '👮', slot: 'head', rarity: 'rare',      unlockAt: 20, label: '警帽' },
+  lotus1:    { emoji: '🪷', slot: 'head', rarity: 'rare',      unlockAt: 20, label: '荷花髮飾' },
+  dive1:     { emoji: '🤿', slot: 'face', rarity: 'rare',      unlockAt: 20, label: '潛水鏡' },
+  funny1:    { emoji: '🥸', slot: 'face', rarity: 'common',    unlockAt: 5,  label: '搞笑眼鏡' },
+  mask1:     { emoji: '😷', slot: 'face', rarity: 'legendary', unlockAt: 40, label: '口罩' },
+  tie1:      { emoji: '👔', slot: 'neck', rarity: 'rare',      unlockAt: 20, label: '領帶' },
+  pearl1:    { emoji: '📿', slot: 'neck', rarity: 'legendary', unlockAt: 40, label: '珍珠項鍊' },
+  corsage1:  { emoji: '🏵️', slot: 'neck', rarity: 'rare',      unlockAt: 20, label: '胸花' },
+}
+// Food shown/fed per pet level index (0=初生...4=傳說)
+export const LEVEL_FOODS = {
+  0: { emoji: '🍼', label: '牛奶' },
+  1: { emoji: '🍎', label: '蘋果' },
+  2: { emoji: '🍕', label: '披薩' },
+  3: { emoji: '🍱', label: '便當' },
+  4: { emoji: '🎂', label: '蛋糕' },
 }
 // 7 unlockable pet-habitat scenes; unlockAt = cumulative earned score
 export const SCENES = [
@@ -67,4 +85,9 @@ export const fmtTime = (ts) => {
   if(!ts)return''
   const d=new Date(ts)
   return `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`
+}
+const WEEKDAY_NAMES = ['日','一','二','三','四','五','六']
+export const fmtTodayLabel = () => {
+  const d = new Date()
+  return `今天 ${d.getMonth()+1}/${d.getDate()} 週${WEEKDAY_NAMES[d.getDay()]}`
 }
