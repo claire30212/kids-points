@@ -1,7 +1,10 @@
 export const COLORS = ['#E8A59B','#A8C4B8','#9BB5CC','#C4B5D4','#F0C878','#B8D4A0','#D4A8C4','#8EC8C8']
 export const PETS = {
   cat:{e:'🐱',n:'貓咪'}, dog:{e:'🐶',n:'狗狗'}, rabbit:{e:'🐰',n:'兔兔'},
-  dino:{e:'🦕',n:'恐龍'}, duck:{e:'🐥',n:'小鴨'}, monster:{e:'👾',n:'怪獸'}
+  dino:{e:'🦕',n:'恐龍'}, duck:{e:'🐥',n:'小鴨'}, monster:{e:'👾',n:'怪獸'},
+  schnauzer:{e:'🐩',n:'雪納瑞'}, superman:{e:'🦸',n:'超人'}, lion:{e:'🦁',n:'獅子'},
+  princess:{e:'👸',n:'公主'}, snowman:{e:'⛄',n:'雪人'}, blackcat:{e:'🐈‍⬛',n:'黑貓'},
+  unicorn:{e:'🦄',n:'獨角獸'}
 }
 // 14 accessories across 3 rarities; slot = head|face|neck; unlockAt = cumulative earned score
 export const ACCESSORIES = {
@@ -30,13 +33,17 @@ export const ACCESSORIES = {
   pearl1:    { emoji: '📿', slot: 'neck', rarity: 'legendary', unlockAt: 40, label: '珍珠項鍊' },
   corsage1:  { emoji: '🏵️', slot: 'neck', rarity: 'rare',      unlockAt: 20, label: '胸花' },
 }
-// Food shown/fed per pet level index (0=初生...4=傳說)
+// Food shown/fed per pet level index (0=初生...8=神話)
 export const LEVEL_FOODS = {
   0: { emoji: '🍼', label: '牛奶' },
   1: { emoji: '🍎', label: '蘋果' },
   2: { emoji: '🍕', label: '披薩' },
   3: { emoji: '🍱', label: '便當' },
   4: { emoji: '🎂', label: '蛋糕' },
+  5: { emoji: '🍹', label: '果汁' },
+  6: { emoji: '🌟', label: '星星糖' },
+  7: { emoji: '👑', label: '御膳' },
+  8: { emoji: '🍇', label: '仙果' },
 }
 // 7 unlockable pet-habitat scenes; unlockAt = cumulative earned score
 export const SCENES = [
@@ -49,11 +56,15 @@ export const SCENES = [
   { id: 'rainbow',       label: '🌈 彩虹神殿', unlockAt: 300, bg: 'linear-gradient(135deg,#FFD0D0,#FFFFC0,#C0FFC0,#C0D0FF)', description: '300分解鎖' },
 ]
 export const PET_LEVELS = [
-  {min:0, label:'初生', acc:[],                    habitat:'🌱',habitatLabel:'空地',habitatBg:'#EFF8EE',items:[]},
-  {min:5, label:'幼年', acc:['🎀'],                habitat:'🏡',habitatLabel:'小窩',habitatBg:'#FFF5E8',items:['🌸']},
-  {min:15,label:'少年', acc:['🎀','🕶️'],           habitat:'🏠',habitatLabel:'小屋',habitatBg:'#E8F4FF',items:['🌸','⭐']},
-  {min:30,label:'青年', acc:['🎀','🕶️','🎩'],      habitat:'🏰',habitatLabel:'城堡',habitatBg:'#F5E8FF',items:['🌸','⭐','🌈']},
-  {min:50,label:'傳說', acc:['🎀','🕶️','🎩','👑'], habitat:'🌟',habitatLabel:'神殿',habitatBg:'#FFF8E0',items:['🌸','⭐','🌈','💎']},
+  {min:0,   label:'初生',   acc:[],                    habitat:'🌱',habitatLabel:'空地',    habitatBg:'#EFF8EE',items:[]},
+  {min:5,   label:'幼年',   acc:['🎀'],                habitat:'🏡',habitatLabel:'小窩',    habitatBg:'#FFF5E8',items:['🌸']},
+  {min:15,  label:'少年',   acc:['🎀','🕶️'],           habitat:'🏠',habitatLabel:'小屋',    habitatBg:'#E8F4FF',items:['🌸','⭐']},
+  {min:30,  label:'青年',   acc:['🎀','🕶️','🎩'],      habitat:'🏰',habitatLabel:'城堡',    habitatBg:'#F5E8FF',items:['🌸','⭐','🌈']},
+  {min:50,  label:'傳說',   acc:['🎀','🕶️','🎩','👑'], habitat:'🌟',habitatLabel:'神殿',    habitatBg:'#FFF8E0',items:['🌸','⭐','🌈','💎']},
+  {min:80,  label:'冒險家', acc:[],                    habitat:'🏖️',habitatLabel:'海邊小屋',habitatBg:'#EEF8FF',items:['🐚','🌊','☀️','🌴']},
+  {min:120, label:'探索者', acc:[],                    habitat:'🚀',habitatLabel:'太空站',  habitatBg:'#1A1A3E',items:['🪐','✨','🌙','⭐']},
+  {min:200, label:'王者',   acc:[],                    habitat:'🏯',habitatLabel:'夢幻城堡',habitatBg:'#F0E8FF',items:['👑','💎','✨','🌟']},
+  {min:300, label:'神話',   acc:[],                    habitat:'🌈',habitatLabel:'彩虹神殿',habitatBg:'#FFF8E0',items:['🌈','⭐','💎','✨']},
 ]
 export const PET_MSGS = {
   feed:['😋 吃得好飽～','🍎 謝謝你餵我！','好好吃哦！🍊'],

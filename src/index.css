@@ -230,6 +230,11 @@ button { cursor: pointer; border: none; font-family: inherit; }
 }
 .backfill-day-btn:hover { border-color: #C4B5D4; }
 .backfill-day-btn.active { background: #F5F0FC; border-color: #C4B5D4; color: #5A4068; font-weight: 600; }
+.backfill-day-btn.backfill-day-today { border-color: #F0C878; }
+.backfill-today-tag {
+  display: inline-block; margin-left: 4px; background: #F0C878; color: #fff;
+  border-radius: 8px; padding: 1px 6px; font-size: 10px; font-weight: 700;
+}
 .backfill-tasks { display: flex; flex-direction: column; gap: 6px; }
 .backfill-task-row {
   display: flex; align-items: center; justify-content: space-between;
@@ -320,8 +325,8 @@ button { cursor: pointer; border: none; font-family: inherit; }
 .color-dot { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: transform .15s; }
 .color-dot.selected { border-color: #5A5059; transform: scale(1.15); }
 .color-dot:hover { transform: scale(1.1); }
-.pet-picker { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
-.pet-btn { background: #F0EBE7; border-radius: 12px; padding: 6px 12px; font-size: 13px; color: #5A5059; border: 2px solid transparent; }
+.pet-picker { display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); gap: 8px; margin-top: 8px; }
+.pet-btn { background: #F0EBE7; border-radius: 12px; padding: 6px 8px; font-size: 13px; color: #5A5059; border: 2px solid transparent; text-align: center; white-space: nowrap; }
 .pet-btn.selected { border-color: #C4B5D4; background: #F5F0FC; }
 .type-picker { display: flex; gap: 10px; margin-top: 8px; }
 .type-btn { flex: 1; background: #F0EBE7; border-radius: 12px; padding: 8px; font-size: 13px; color: #5A5059; border: 2px solid transparent; }
@@ -352,7 +357,7 @@ button { cursor: pointer; border: none; font-family: inherit; }
 }
 .habitat-item { position: absolute; animation: float 3s ease-in-out infinite; }
 @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
-.pet-body { display: flex; flex-direction: column; align-items: center; position: relative; }
+.pet-body { display: flex; flex-direction: column; align-items: center; position: relative; z-index: 10; }
 .pet-emoji { font-size: 72px; line-height: 1; transition: transform .2s; }
 .pet-accessories { display: flex; gap: 4px; margin-top: 6px; font-size: 18px; }
 .pet-acc { }
@@ -384,6 +389,8 @@ button { cursor: pointer; border: none; font-family: inherit; }
 }
 .level-row.locked { opacity: .5; }
 .level-row:last-child { border-bottom: none; }
+.level-row-mythic.unlocked { background: linear-gradient(90deg, rgba(240,200,120,.18), transparent); border-radius: 8px; }
+.level-label-mythic { color: #B8860B; font-weight: 700; }
 
 /* ─── PIN wrap ─── */
 .pin-wrap { position: relative; display: flex; align-items: center; }
@@ -535,7 +542,7 @@ button { cursor: pointer; border: none; font-family: inherit; }
    ════════════════════════════════════════ */
 .habitat-scene {
   position: absolute; inset: 0; overflow: hidden;
-  border-radius: 20px; pointer-events: none;
+  border-radius: 20px; pointer-events: none; z-index: 1;
 }
 
 /* ── Lv0: Grass ── */
@@ -637,12 +644,12 @@ button { cursor: pointer; border: none; font-family: inherit; }
 .sc-bird-sm { width: 14px; height: 6px; }
 .sc-bird-sm::before, .sc-bird-sm::after { width: 7px; height: 5px; }
 
-/* ── Lv3: Castle Towers ── */
+/* ── Lv3: Castle Towers — flanking the pet on both sides, low wall below ── */
 .sc-castle-wrap {
-  position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
-  display: flex; align-items: flex-end; gap: 4px;
+  position: absolute; bottom: 0; left: 6%; right: 6%; height: 44px;
+  pointer-events: none;
 }
-.sc-tower { position: relative; background: #B0A0C0; flex-shrink: 0; }
+.sc-tower { position: absolute; bottom: 0; background: #B0A0C0; }
 .sc-tower::before {
   content: ''; position: absolute;
   bottom: 100%; left: 50%; transform: translateX(-50%);
@@ -652,10 +659,16 @@ button { cursor: pointer; border: none; font-family: inherit; }
 }
 .sc-tower-s         { width: 22px; height: 30px; }
 .sc-tower-s::before { border-width: 0 14px 14px 14px; }
-.sc-tower-c         { width: 30px; height: 44px; }
-.sc-tower-c::before { border-width: 0 18px 18px 18px; }
+.sc-tower-left  { left: 0; }
+.sc-tower-right { right: 0; }
+/* Low center wall — stays fully below the pet, never behind its body */
+.sc-tower-c {
+  left: 50%; transform: translateX(-50%);
+  width: 20px; height: 14px;
+}
+.sc-tower-c::before { border-width: 0 12px 8px 12px; }
 
-/* ── Lv4: Temple Glow + Pillars ── */
+/* ── Lv4: Temple Glow + Pillars — split to both sides, gap in the middle for the pet ── */
 .sc-glow {
   position: absolute; inset: 0;
   background: radial-gradient(ellipse at 50% 72%, rgba(255,215,60,0.22) 0%, rgba(255,215,60,0.07) 45%, transparent 70%);
@@ -664,8 +677,8 @@ button { cursor: pointer; border: none; font-family: inherit; }
 @keyframes glowBreathe { 0%,100%{opacity:0.55} 50%{opacity:1} }
 
 .sc-temple-wrap {
-  position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
-  display: flex; align-items: flex-end; gap: 5px; padding: 0 2px;
+  position: absolute; bottom: 0; left: 12%; right: 12%;
+  display: flex; align-items: flex-end; justify-content: space-between;
 }
 .sc-pillar {
   width: 10px; height: 40px; flex-shrink: 0;
@@ -673,6 +686,52 @@ button { cursor: pointer; border: none; font-family: inherit; }
   border-radius: 2px 2px 0 0;
 }
 .sc-pillar-lg { width: 12px; height: 52px; }
+
+/* ── Lv5: Beach Hut ── */
+.sc-sand {
+  position: absolute; bottom: 0; left: -5%; right: -5%; height: 32px;
+  background: linear-gradient(180deg, #F5E0B0 0%, #EBC888 100%);
+  border-radius: 50% 50% 0 0; opacity: 0.7;
+}
+.sc-sun {
+  position: absolute; width: 34px; height: 34px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #FFE9A0, #FFC94D);
+  box-shadow: 0 0 14px 4px rgba(255,201,77,.35);
+  animation: glowBreathe 3s ease-in-out infinite;
+}
+
+/* ── Lv6: Space Station ── */
+.sc-space-glow {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 30%, rgba(140,150,255,.22) 0%, transparent 60%);
+}
+.sc-planet {
+  position: absolute; width: 26px; height: 26px; border-radius: 50%;
+  background: linear-gradient(135deg, #F5C97A, #D89A4A);
+}
+.sc-planet::after {
+  content: ''; position: absolute; top: 50%; left: -7px; right: -7px; height: 6px;
+  border: 1px solid rgba(255,255,255,.55); border-radius: 50%;
+  transform: translateY(-50%) rotate(-15deg);
+}
+
+/* ── Lv7: Grand Castle (gold towers, flanking pet) ── */
+.sc-castle-grand .sc-tower { background: linear-gradient(180deg, #F0C0E0 0%, #D8A0C8 100%); }
+.sc-castle-grand .sc-tower::before { border-color: transparent transparent #C888B8 transparent; }
+.sc-castle-grand .sc-tower-c { background: linear-gradient(180deg, #F5E090 0%, #D4A840 100%); }
+.sc-castle-grand .sc-tower-c::before { border-color: transparent transparent #C4A030 transparent; }
+
+/* ── Lv8: Rainbow Temple ── */
+.sc-rainbow-arc {
+  position: absolute; top: -18%; left: 10%; right: 10%; height: 60%;
+  border-radius: 50% 50% 0 0;
+  border: 10px solid transparent;
+  border-image: conic-gradient(from 180deg at 50% 100%, #FF9AA2, #FFD08A, #FFF3A0, #A8E6B0, #A8D0F0, #C8A8E8, #FF9AA2) 1;
+  opacity: 0.55;
+}
+.sc-temple-rainbow .sc-pillar {
+  background: linear-gradient(180deg, #FFB0C0 0%, #A8D0F0 50%, #C8A8E8 100%);
+}
 
 /* ════════════════════════════════════════
    ─── Feed Animation ───

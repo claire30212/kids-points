@@ -344,9 +344,9 @@ export default function Pet({ kid, totalEarned }) {
           </>}
           {levelIdx === 3 && <>
             <div className="sc-castle-wrap">
-              <div className="sc-tower sc-tower-s" />
+              <div className="sc-tower sc-tower-s sc-tower-left" />
               <div className="sc-tower sc-tower-c" />
-              <div className="sc-tower sc-tower-s" />
+              <div className="sc-tower sc-tower-s sc-tower-right" />
             </div>
             <div className="sc-star" style={{top:'14%',left:'12%'}} />
             <div className="sc-star" style={{top:'20%',right:'14%',animationDelay:'0.7s'}} />
@@ -356,11 +356,42 @@ export default function Pet({ kid, totalEarned }) {
           {levelIdx === 4 && <>
             <div className="sc-glow" />
             <div className="sc-temple-wrap">
-              <div className="sc-pillar" />
               <div className="sc-pillar sc-pillar-lg" />
               <div className="sc-pillar" />
+              <div className="sc-pillar" />
+              <div className="sc-pillar sc-pillar-lg" />
+            </div>
+          </>}
+          {levelIdx === 5 && <>
+            <div className="sc-sand" />
+            <div className="sc-sun" style={{top:'10%',right:'14%'}} />
+            <div className="sc-bird" style={{top:'18%',left:'10%'}} />
+            <div className="sc-bird sc-bird-sm" style={{top:'24%',left:'22%',animationDelay:'0.4s'}} />
+          </>}
+          {levelIdx === 6 && <>
+            <div className="sc-space-glow" />
+            <div className="sc-planet" style={{top:'12%',right:'12%'}} />
+            <div className="sc-star" style={{top:'16%',left:'10%'}} />
+            <div className="sc-star sc-star-sm" style={{top:'28%',left:'24%',animationDelay:'0.6s'}} />
+            <div className="sc-star sc-star-sm" style={{top:'14%',right:'30%',animationDelay:'1s'}} />
+          </>}
+          {levelIdx === 7 && <>
+            <div className="sc-glow" />
+            <div className="sc-castle-wrap sc-castle-grand">
+              <div className="sc-tower sc-tower-s sc-tower-left" />
+              <div className="sc-tower sc-tower-c" />
+              <div className="sc-tower sc-tower-s sc-tower-right" />
+            </div>
+            <div className="sc-star" style={{top:'12%',left:'14%'}} />
+            <div className="sc-star sc-star-sm" style={{top:'22%',right:'16%',animationDelay:'0.5s'}} />
+          </>}
+          {levelIdx === 8 && <>
+            <div className="sc-rainbow-arc" />
+            <div className="sc-temple-wrap sc-temple-rainbow">
               <div className="sc-pillar sc-pillar-lg" />
               <div className="sc-pillar" />
+              <div className="sc-pillar" />
+              <div className="sc-pillar sc-pillar-lg" />
             </div>
           </>}
         </div>
@@ -499,14 +530,20 @@ export default function Pet({ kid, totalEarned }) {
       {/* ── Growth Stages ── */}
       <div className="pet-levels-guide">
         <div className="task-group-title">成長階段</div>
-        {PET_LEVELS.map((l, i) => (
-          <div key={i} className={`level-row ${totalEarned >= l.min ? 'unlocked' : 'locked'}`}>
-            <span>{l.habitat} {l.habitatLabel}</span>
-            <span>{l.label}</span>
-            <span>{l.min === 0 ? '初始' : `${l.min} 點`}</span>
-            <span>{totalEarned >= l.min ? '✅' : '🔒'}</span>
-          </div>
-        ))}
+        {PET_LEVELS.map((l, i) => {
+          const unlocked = totalEarned >= l.min
+          const isMythic = i === PET_LEVELS.length - 1
+          return (
+            <div key={i} className={`level-row ${unlocked ? 'unlocked' : 'locked'} ${isMythic ? 'level-row-mythic' : ''}`}>
+              <span>{l.habitat} {l.habitatLabel}</span>
+              <span className={isMythic && unlocked ? 'level-label-mythic' : ''}>
+                {l.label}{isMythic && unlocked ? ' ⭐' : ''}
+              </span>
+              <span>{l.min === 0 ? '初始' : `${l.min} 點`}</span>
+              <span>{unlocked ? '✅' : '🔒'}</span>
+            </div>
+          )
+        })}
       </div>
     </div>
   )

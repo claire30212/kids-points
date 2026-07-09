@@ -163,7 +163,7 @@ export default function TaskBoard({ kid, history, onRefresh, isParent, onStatsUp
   const today = todayKey()
   const noSort = !dailySort.field && !onceSort.field
   const pastDays = Array.from({ length: 5 }, (_, i) => {
-    const d = new Date(Date.now() - (i + 1) * 86400000)
+    const d = new Date(Date.now() - i * 86400000)
     return d.toISOString().slice(0, 10)
   })
   const backfillableTasks = rawDailyTasks.filter(t => !t.is_penalty)
@@ -270,12 +270,15 @@ export default function TaskBoard({ kid, history, onRefresh, isParent, onStatsUp
       {showBackfill && (
         <div className="backfill-panel">
           <div className="backfill-days">
-            {pastDays.map(d => (
-              <button key={d} className={`backfill-day-btn ${backfillDay === d ? 'active' : ''}`}
-                onClick={() => setBackfillDay(backfillDay === d ? null : d)}>
-                {fmtBackfillDate(d)}
-              </button>
-            ))}
+            {pastDays.map(d => {
+              const isToday = d === today
+              return (
+                <button key={d} className={`backfill-day-btn ${backfillDay === d ? 'active' : ''} ${isToday ? 'backfill-day-today' : ''}`}
+                  onClick={() => setBackfillDay(backfillDay === d ? null : d)}>
+                  {fmtBackfillDate(d)}{isToday && <span className="backfill-today-tag">今天</span>}
+                </button>
+              )
+            })}
           </div>
           {backfillDay && (
             <>
